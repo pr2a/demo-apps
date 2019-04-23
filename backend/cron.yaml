@@ -1,0 +1,4 @@
+cron:
+- description: "pick winner job"
+  url: /pickwinner
+  schedule: every 10 minutes
