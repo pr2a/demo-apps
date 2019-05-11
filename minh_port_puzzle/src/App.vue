@@ -10,7 +10,8 @@ html {
     #00aee9 0%,
     rgba(105, 250, 189, 0) 119.53%
   );
-  height: 100%;
+  background-repeat: no-repeat;
+  height: 100vh;
 }
 body,
 #app {
@@ -103,7 +104,6 @@ html {
 }
 
 .logo {
-  margin: 1em auto;
   color: red;
   height: 2em;
   width: 2em;

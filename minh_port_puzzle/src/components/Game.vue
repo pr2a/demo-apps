@@ -67,7 +67,14 @@
       :key="i"
       :style="cellStyle"
     >
-      <Chip ref="chips" :animation-time-ms="animationTimeMs" :value="value" :size-px="cellSizePx"></Chip>
+      <Chip
+        ref="chips"
+        v-bind:key="i"
+        :animation-time-ms="animationTimeMs"
+        :value="value"
+        :size-px="cellSizePx"
+        :boardSizePx="boardSizePx"
+      ></Chip>
     </div>
   </div>
 </template>
@@ -75,42 +82,75 @@
 <script>
 import Chip from "./Chip";
 import Vue from "vue";
-import { playMoveSound, playBeginSound, playEndSound } from "../lib/sound";
+import {
+  playMoveSound,
+  playBeginSound,
+  playEndSound,
+  playBackgroundMusic,
+  stopBackgroundMusic
+} from "../lib/sound";
 import { constants } from "fs";
 import { isAbsolute } from "path";
-import { connect } from "tls";
 
 function clamp(v, min, max) {
   return Math.max(min, Math.min(max, v));
 }
 
-function createSwipeListener(onSwipe) {
+function createSwipeListener(onSwipe, getPosition, getTapLoc) {
   var sens = 5;
   var st;
-
   function onStart(e) {
     st = e.touches[0];
+    e.stopPropagation();
     e.preventDefault();
   }
 
   function onEnd(e) {
     var et = e.changedTouches[0];
-    var x = st.clientX - et.clientX;
-    var y = st.clientY - et.clientY;
-    var mx = Math.abs(x);
-    var my = Math.abs(y);
-    if (mx < sens && my < sens) return;
+    var x = (st.clientX || st.pageX) - (et.clientX || et.pageX);
+    var y = (st.clientY || st.pageY) - (et.clientY || et.pageY);
+    if (x === 0 && y === 0) {
+      let cx = et.clientX || et.pageX,
+        cy = et.clientY || et.pageY;
+      let newPos = getTapLoc(cx, cy);
+      let pos = getPosition();
+      let dx = newPos.x - pos.x;
+      let dy = newPos.y - pos.y;
+      if (Math.abs(dx) + Math.abs(dy) != 1) return;
+      let dClick = dx == 0 ? (dy > 0 ? "R" : "L") : dx > 0 ? "D" : "U";
+      console.log(dClick);
 
-    var d = mx > my ? (x > 0 ? "L" : "R") : y > 0 ? "U" : "D";
-    onSwipe(d);
+      onSwipe(dClick);
+    } else {
+      var mx = Math.abs(x);
+      var my = Math.abs(y);
+      if (mx < sens && my < sens) return;
+      var d = mx > my ? (x > 0 ? "L" : "R") : y > 0 ? "U" : "D";
+      console.log(d);
+      onSwipe(d);
+    }
+    // let cx = et.clientX,cy = et.clientY;
+    //   let newPos = getTapLoc(cx, cy);
+    //   let pos = getPosition();
+    //   let dx = newPos.x - pos.x;
+    //   let dy = newPos.y - pos.y;
+    //   if (Math.abs(dx) + Math.abs(dy) != 1) return;
+    //   let dClick = dx == 0 ? (dy > 0 ? "R" : "L") : dx > 0 ? "D" : "U";
+    //   console.log(dClick);
+
+    //   onSwipe(dClick);
   }
 
   return {
     attach(el) {
+      // el.addEventListener("mousemove", onEnd, false);
+      // el.addEventListener("click", onEnd, false);
       el.addEventListener("touchstart", onStart, false);
       el.addEventListener("touchend", onEnd, false);
     },
     detach(el) {
+      // el.removeEventListener("mousemove", onEnd, false);
+      // el.removeEventListener("click", onEnd);
       el.removeEventListener("touchstart", onStart);
       el.removeEventListener("touchend", onEnd);
     }
@@ -133,9 +173,11 @@ function createTapListener(onTap, getPosition, getTapLoc) {
   return {
     attach(el) {
       el.addEventListener("mouseup", onEnd, false);
+      // el.addEventListener("click", onEnd, false);
     },
     detach(el) {
       el.removeEventListener("mouseup", onEnd);
+      // el.removeEventListener("click", onEnd);
     }
   };
 }
@@ -160,7 +202,6 @@ keyMap[76] = "R";
 keyMap[75] = "U";
 keyMap[74] = "D";
 
-
 export default {
   name: "Game",
   components: {
@@ -175,7 +216,7 @@ export default {
     boardSizePx: { type: Number, default: 0 },
     animationTimeMs: { type: Number, default: 150 },
     gameEnded: Boolean,
-    gameStarted: Boolean
+    gameStarted: Boolean,
   },
   data() {
     return {
@@ -239,7 +280,9 @@ export default {
   methods: {
     startGame() {
       // Add begin sound.
-      playBeginSound();
+       playBackgroundMusic();
+
+      //playBeginSound();
       this.runKeyboardControl(this.move);
       this.runTapControl(this.move);
       this.runTouchControl(this.move);
@@ -266,13 +309,18 @@ export default {
       var getPosition = () => {
         return this.position;
       };
+
       let w = parseInt(this.boardStyle.width);
       let h = parseInt(this.boardStyle.height);
       let cw =
-        (w * parseFloat(this.cellStyle.width + this.cellStyle.marginLeft)) /
+        (w *
+          (parseFloat(this.cellStyle.width.replace("%", "")) +
+            parseFloat(this.cellStyle.marginLeft.replace("%", "")))) /
         100;
       let ch =
-        (h * parseFloat(this.cellStyle.height + this.cellStyle.marginTop)) /
+        (h *
+          (parseFloat(this.cellStyle.height.replace("%", "")) +
+            parseFloat(this.cellStyle.marginTop.replace("%", "")))) /
         100;
       var getTapLoc = (x, y) => {
         return { y: parseInt(x / cw), x: parseInt(y / ch) };
@@ -295,12 +343,45 @@ export default {
     },
 
     runTouchControl(move) {
-      var sw = createSwipeListener(m => {
-        if (!this.gameStarted) return;
-        // Add sound before any move.
-        playMoveSound();
-        move(m);
-      });
+      var sw = createSwipeListener(
+        m => {
+          if (!this.gameStarted) return;
+          // Add sound before any move.
+          playMoveSound();
+          move(m);
+        },
+        () => {
+          return this.position;
+        },
+        (x, y) => {
+          let w = parseInt(this.boardStyle.width);
+          let h = parseInt(this.boardStyle.height);
+
+          let cw =
+            (w *
+              (parseFloat(this.cellStyle.width.replace("%", "")) +
+                parseFloat(this.cellStyle.marginLeft.replace("%", "")))) /
+            100;
+          let ch =
+            (h *
+              (parseFloat(this.cellStyle.height.replace("%", "")) +
+                parseFloat(this.cellStyle.marginTop.replace("%", "")))) /
+            100;
+          //  let output = {
+          //    w,h,cw,ch,bound: this.$el.getBoundingClientRect(),boardStyle: this.boardStyle, cellStyle: this.cellStyle
+          //  }
+          //  console.log(output);
+
+          let sizeElement = {
+            x: x - this.$el.getBoundingClientRect().left ,
+            y: y - this.$el.getBoundingClientRect().top
+          };
+          return {
+            y: parseInt(sizeElement.x / cw),
+            x: parseInt(sizeElement.y / ch)
+          };
+        }
+      );
       var el = this.$el;
       sw.attach(el);
       this.$once("completeLevel", function() {
@@ -331,6 +412,7 @@ export default {
       return this.cells.findIndex(x => x !== v) === -1;
     },
     reset() {
+      //playBackgroundMusic();
       this.cells = this.game.contents.slice(0);
       this.position = Object.assign(
         {},
@@ -338,6 +420,9 @@ export default {
         this.game.initialSelected
       );
     }
+  },
+  destroyed(){
+    console.log('destroyed');
   }
 };
 </script>

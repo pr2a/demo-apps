@@ -3,9 +3,15 @@ const beginSound = require('../assets/begin.wav');
 const endSound = require('../assets/end.wav');
 const backgroundMusic = require('../assets/cryptic.mp3');
 const backgroundMusicAudio = new Audio(backgroundMusic);
-
+var  audioClick ;
 playSound = sound => {
-  var audio = new Audio(sound);
+  if (audioClick) {
+    audioClick.pause();
+    audioClick.currentTime = 0;
+    audioClick =null;
+  }
+  let audio = new Audio(sound);
+  audioClick = audio;
   audio.play();
 };
 
@@ -13,9 +19,17 @@ playAudio = audio => {
   audio.play();
 };
 
-playAudioLoop =  audio => {
-  audio.play();
-  audio.loop = true;
+playAudioLoop = audio => {
+  let promise = audio.play();
+  if (promise !== undefined) {
+    promise.then(_ => {
+      audio.type = "audio/mpeg"
+      audio.loop = true;
+    }).catch(error => {
+
+    });
+  }
+
 }
 
 stopAudio = audio => {
@@ -48,13 +62,14 @@ stopBackgroundMusic = () => {
   stopSound(backgroundMusicAudio);
 };
 
-playPostGameMusic = () => {
-  playAudio(postGameMusicAudio);
-};
+// playPostGameMusic = () => {
+//   playAudio(postGameMusicAudio);
+// };
 
 module.exports = {
   playMoveSound,
   playBeginSound,
   playEndSound,
-  playBackgroundMusic
+  playBackgroundMusic,
+  stopBackgroundMusic
 };

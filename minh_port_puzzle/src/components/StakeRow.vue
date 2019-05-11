@@ -63,6 +63,8 @@ footer {
 .stake-row {
   margin: 1em auto 0;
   justify-content: space-between;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
 .icon-dark-token {
   background-size: contain;
@@ -119,6 +121,7 @@ footer {
 <script>
 import service from "../service";
 import store from "../store";
+import { levels } from '../level-generator';
 export default {
   name: "StakeRow",
   data() {
@@ -136,7 +139,7 @@ export default {
       this.globalData.stake += 20;
     },
     stakeToken() {
-      playBackgroundMusic();
+      this.$emit('stakeToken');
       service.stakeToken(this.globalData.account, this.globalData.stake).then(() => {
         this.$emit("stake", this.globalData.stake);
       });
