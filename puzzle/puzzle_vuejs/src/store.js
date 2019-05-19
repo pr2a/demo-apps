@@ -14,7 +14,6 @@ let store = {
     addTx(tx) {
         this.data.txs.push(tx);
         if (tx.action === "Register") {
-            console.log(tx)
             this.data.id= tx.id;
             this.data.uid= tx.uid;
             this.data.privkey = tx.privkey;
