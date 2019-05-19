@@ -81,11 +81,33 @@
 :-ms-input-placeholder {
   text-align: center;
 }
+
+.redeem-panel-content {
+  width: 100%;
+  .info {
+    width: 100%;
+    .title {
+    }
+    .copyable {
+      background-color: #fff;
+      border-radius: 0.4em;
+      text-align: center;
+      color: #1b295e;
+      padding: 0.5em 1em;
+      font-size: 0.7em;
+      text-transform: none;
+      width: 100%;
+      overflow: auto;
+      cursor: text;
+      margin: 1em 0;
+    }
+  }
+}
 </style>
 
 <template >
-  <div class="redeem-panel-container flex-hv-center" :style="redeemPanelStyle">
-    <div class="redeem-panel flex-hv-center">
+  <div class="redeem-panel-container flex-hv-center">
+    <div class="redeem-panel flex-hv-center" :style="redeemPanelStyle">
       <div class="redeem-panel-content">
         <div class="emphasis" :style="emphasisStyle">You just won</div>
         <div class="amount" :style="amountStyle">{{ reward }}</div>
@@ -94,7 +116,13 @@
           <p>Get your public and private key</p>
           <p>for your claimed token</p>
         </div>
-        <input
+        <div class="info">
+          <div class="title" :style="emphasisStyle">Public Key</div>
+          <div class="copyable">{{ globalData.address }}</div>
+          <div class="title" :style="emphasisStyle">Private Key</div>
+          <div class="copyable">{{ globalData.privkey }}</div>
+        </div>
+        <!-- <input
           type="text"
           class="email-input"
           :style="inputEmailStyle"
@@ -103,18 +131,9 @@
           @input="validateEmail"
           v-on:keyup.enter="submitEmail"
         >
-        <div class="err-email">{{ err }}</div>
+        <div class="err-email">{{ err }}</div>-->
 
-        <!-- zien change   :disabled="(email == '' || err != '')" -->
-        <button
-          class="btn-primary"
-          :disabled="(email == '' || err != '')"
-          @click="submitEmail"
-          :style="submitButtonStyle"
-        >Submit</button>
-        <br>
-        <br>
-        <a class="cancel-email" @click="cancelEmail">Cancel</a>
+        <button class="btn-primary" @click="cancelEmail">Done</button>
       </div>
     </div>
   </div>
@@ -131,6 +150,7 @@ export default {
   props: ["reward", "boardSizePx"],
   data() {
     return {
+      globalData: store.data,
       email: "",
       err: ""
     };
@@ -169,7 +189,7 @@ export default {
       };
     },
     redeemPanelStyle() {
-      return { maxWidth: this.boardSizePx };
+      return { width: this.boardSizePx + "px" };
     }
   },
   methods: {
@@ -179,7 +199,6 @@ export default {
     cancelEmail() {
       this.$emit("cancelEmail");
     },
-    // zien add action
     validateEmail() {
       if (this.email == "") {
         this.err = "";
