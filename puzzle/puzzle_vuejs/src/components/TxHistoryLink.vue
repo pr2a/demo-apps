@@ -26,6 +26,7 @@
 <template >
   <span>
     <tx-history-panel v-if="isTxPanelOpen" class="tx-history-panel" @close="isTxPanelOpen = false"></tx-history-panel>
+    <a class="msg">TESTING</a>
   </span>
 </template>
 
