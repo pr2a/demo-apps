@@ -292,7 +292,7 @@ footer {
             </button>
           </div>
         </footer>
-        <div class="fake-footer" v-if="isMobile"></div>
+       <div class="fake-footer" v-if="isMobile"></div>
         <div class="link-footer" v-if="!isMobile">
         </div>
       </div>
