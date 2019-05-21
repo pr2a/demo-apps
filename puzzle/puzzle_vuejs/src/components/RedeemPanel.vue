@@ -25,9 +25,12 @@
   .amount {
     color: #05b0e9;
   }
+
+  /*GET YOUR PUBLIC AND PRIVATE KEY FOR YOUR CLAIMED TOKEN*/
   .text {
     p {
       margin: 0.5em 0;
+      font-size: 1.0em
     }
   }
   .email-input {
@@ -87,7 +90,7 @@
   <div class="redeem-panel-container flex-hv-center" :style="redeemPanelStyle">
     <div class="redeem-panel flex-hv-center">
       <div class="redeem-panel-content">
-        <div class="emphasis" :style="emphasisStyle">You just won</div>
+        <div class="emphasis" :style="emphasisStyle">You just won:</div>
         <div class="amount" :style="amountStyle">{{ reward }}</div>
         <div class="emphasis" :style="emphasisStyle">Harmony Tokens!</div>
         <div class="text" :style="contentEmailStyle">
@@ -105,7 +108,14 @@
         >
         <div class="err-email">{{ err }}</div>
 
-        <!-- zien change   :disabled="(email == '' || err != '')" -->
+        <!-- zien change   :disabled="(email == '' || err != '')" -->            <button
+          class="btn-primary"
+          :disabled="(email == '' || err != '')"
+          @click="submitEmail"
+          :style="submitButtonStyle"
+          >See Transactions
+        </button>
+
         <button
           class="btn-primary"
           :disabled="(email == '' || err != '')"
@@ -159,13 +169,13 @@ export default {
     submitButtonStyle() {
       return {
         paddingTop:
-          Math.sqrt(window.innerWidth + window.innerHeight) / 6 + "px",
+          Math.sqrt(window.innerWidth + window.innerHeight) / 40 + "px",
         paddingBottom:
-          Math.sqrt(window.innerWidth + window.innerHeight) / 6 + "px",
+          Math.sqrt(window.innerWidth + window.innerHeight) / 40 + "px",
         paddingLeft:
-          Math.sqrt(window.innerWidth + window.innerHeight) / 1 + "px",
+          Math.sqrt(window.innerWidth + window.innerHeight) / 10 + "px",
         paddingRight:
-          Math.sqrt(window.innerWidth + window.innerHeight) / 1 + "px"
+          Math.sqrt(window.innerWidth + window.innerHeight) / 10 + "px"
       };
     },
     redeemPanelStyle() {
