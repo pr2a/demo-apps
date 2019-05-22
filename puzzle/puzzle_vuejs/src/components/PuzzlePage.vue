@@ -270,13 +270,14 @@ footer {
             ></Game>
           </transition>
         </div>
-        <stake-row
-          v-if="!gameStarted"
-          @stake="startGame"
-          :style="stakeRowStyle"
+
+        <stake-row 
+          v-if="!gameStarted" 
+          @stake="startGame" 
+          :style="stakeRowStyle" 
           @stakeToken="resetLevel"
         ></stake-row>
-        <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
+        <footer class="flex-vertical" :style="{ width: boardSizePx + '100px' }" v-if="gameStarted">
           <div class="flex-horizontal action-row">
             <span
               class="flex-grow level-text"
@@ -289,19 +290,11 @@ footer {
                 visibility: gameEnded ? 'hidden':'visible',
                 fontSize: boardSizePx / 20 + 'px'
                 }"
-            >
               <font-awesome-icon icon="sync"></font-awesome-icon>
             </button>
           </div>
         </footer>
-        <div class="fake-footer" v-if="isMobile"></div>
-        <div class="link-footer" v-if="!isMobile">
-          <a
-            :href="'https://explorer2.harmony.one/#/address/' + globalData.address"
-            target="_blank"
-            class="link"
-          >View Transactions</a>
-        </div>
+        <div class="link-footer"></div>
       </div>
     </div>
   </div>
@@ -417,6 +410,7 @@ export default {
     gameTutorialStyle() {
       return { fontSize: this.boardSizePx / 14 + "px" };
     },
+    /*MOVE CURSOR TO ADJACENT CELLS...*/
     gameTutorialSmallStyle() {
       return { fontSize: this.boardSizePx / 16 + "px" };
     },
@@ -426,6 +420,7 @@ export default {
     levelTextStyle() {
       return { fontSize: this.boardSizePx / 18 + "px" };
     },
+    /*tokens and start button on bottom*/
     stakeRowStyle() {
       return {
         width: this.boardSizePx + "px",

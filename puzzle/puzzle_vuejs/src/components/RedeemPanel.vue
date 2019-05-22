@@ -1,4 +1,12 @@
 <style scoped lang="less">
+a:link {
+  text-decoration: none;
+}
+
+a:hover {
+  background-color: lightgreen;
+}
+
 .redeem-panel-container {
   position: absolute;
   top: 0;
@@ -93,7 +101,7 @@
       border-radius: 0.4em;
       text-align: center;
       color: #1b295e;
-      padding: 0.5em 1em;
+      padding: 1.5em 1em;
       font-size: 0.7em;
       text-transform: none;
       width: 100%;
@@ -113,8 +121,8 @@
         <div class="amount" :style="amountStyle">{{ reward }}</div>
         <div class="emphasis" :style="emphasisStyle">Harmony Tokens!</div>
         <div class="text" :style="contentEmailStyle">
-          <p>Get your public and private key</p>
-          <p>for your claimed token</p>
+          <p>Save your public and private key</p>
+          <p>to claim your token!</p>
         </div>
         <div class="info">
           <div class="title" :style="emphasisStyle">Public Key</div>
@@ -122,6 +130,7 @@
           <div class="title" :style="emphasisStyle">Private Key</div>
           <div class="copyable">{{ globalData.privkey }}</div>
         </div>
+
         <!-- <input
           type="text"
           class="email-input"
@@ -132,7 +141,7 @@
           v-on:keyup.enter="submitEmail"
         >
         <div class="err-email">{{ err }}</div>-->
-
+        <a :href="'https://explorer2.harmony.one/#/address/'+ globalData.address" target="_blank" class="btn btn-primary">See Transactions</a>
         <button class="btn-primary" @click="cancelEmail">Done</button>
       </div>
     </div>
