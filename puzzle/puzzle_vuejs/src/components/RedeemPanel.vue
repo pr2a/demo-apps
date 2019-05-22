@@ -129,7 +129,8 @@ a:hover {
           <div class="copyable">{{ globalData.address }}</div>
           <div class="title" :style="emphasisStyle">Private Key</div>
           <div class="copyable">{{ globalData.privkey }}</div>
-          </div>
+        </div>
+
         <!-- <input
           type="text"
           class="email-input"
@@ -141,7 +142,7 @@ a:hover {
         >
         <div class="err-email">{{ err }}</div>-->
         <a :href="'https://explorer2.harmony.one/#/address/'+ globalData.address" target="_blank" class="btn btn-primary">See Transactions</a>
-        <button class="btn-primary"  @click="cancelEmail">Exit</button>
+        <button class="btn-primary" @click="cancelEmail">Done</button>
       </div>
     </div>
   </div>

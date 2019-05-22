@@ -6,7 +6,6 @@
   display: flex;
   flex: 1;
   flex-direction: row;
-  min-height: 55px;
 }
 
 footer {
@@ -49,12 +48,12 @@ footer {
 }
 
 .main-container {
-  height: 100vh;
+  height: 100%;
   .game-container {
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
     .overlay {
       width: 100%;
       height: 100%;
@@ -170,7 +169,6 @@ footer {
   flex: 1;
 }
 .icon-clock,
-
 .icon-token {
   background-size: contain;
 }
@@ -204,7 +202,6 @@ footer {
     ></redeem-panel>
     <div class="main-container appearing">
       <div class="game-container" ref="gameContainer">
-        <!--<redeem-panel v-if="gameEnded && !globalData.email" :reward="reward"></redeem-panel>-->
         <a
           :href="'https://explorer2.harmony.one/#/address/' + globalData.address"
           class="logo"
@@ -218,8 +215,7 @@ footer {
             <div class="content">
               {{ globalData.balance }}
               <transition>
-                <span v-if="balanceIncrease!=''" class="number-increase"> {{ balanceIncrease }}
-                </span>
+                <span v-if="balanceIncrease!=''" class="number-increase">{{ balanceIncrease }}</span>
               </transition>
             </div>
           </div>
@@ -247,10 +243,11 @@ footer {
           <div v-if="gameEnded || !gameStarted">
             <div class="overlay game-over-message appearing">
               <div class="content content-tutorial">
-                <p :style="gameOverStyle" v-if="!globalData.account">Logging in...</p>
+                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging in...</p>
                 <p :style="gameOverStyle" v-else-if="gameEnded">Game over!</p>
                 <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">
-                  <span :style="gameTutorialSmallStyle"
+                  <span
+                    :style="gameTutorialSmallStyle"
                   >Move cursor to adjacent cells to increase the number by 1. Win a level by making all numbers equal!</span>
                   <br>
                   <br>Place bet (bottom left) and click “Start"
@@ -273,6 +270,7 @@ footer {
             ></Game>
           </transition>
         </div>
+
         <stake-row 
           v-if="!gameStarted" 
           @stake="startGame" 
@@ -372,7 +370,7 @@ export default {
       timer: null,
       timeIncrease: "",
       balanceIncrease: "",
-      isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent),
+      isMobile: mobilecheck(),
       reward: 0,
       cancelEmail: false
     };
@@ -404,10 +402,10 @@ export default {
       return { fontSize: this.boardSizePx / 6 + "px" };
     },
     //TODO
-    //can we find a better way to update the styles? 
-    //I don't want to have so many style related code in the view model. 
-    // Ideally it should only contain work-flow related logic. 
-    // Possible solution: setting the font-size of container and use em to control those sizes using css? 
+    //can we find a better way to update the styles?
+    //I don't want to have so many style related code in the view model.
+    // Ideally it should only contain work-flow related logic.
+    // Possible solution: setting the font-size of container and use em to control those sizes using css?
     ///Then we only need to use JS to change one thing -- font-size of container.
     gameTutorialStyle() {
       return { fontSize: this.boardSizePx / 14 + "px" };
@@ -480,13 +478,12 @@ export default {
       this.$refs[`game${this.levelIndex}`][0].reset();
     },
     onLevelComplete(moves) {
-
       if (this.levelIndex === this.levels.length - 1) {
         this.endGame();
         return;
       }
       service
-        .completeLevel(this.globalData.account, this.levelIndex + 1, moves)
+        .completeLevel(this.globalData.privkey, this.levelIndex + 1, moves)
         .then(rewards => {
           this.levelIndex++;
           let timeChange = 15;

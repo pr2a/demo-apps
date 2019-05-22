@@ -24,7 +24,7 @@ export default {
             store.addTx({
                 action: "Register",
                 address: data.address,
-                account: data.privkey,
+                privkey: data.privkey,
                 id: data.txid,
                 uid: data.uid,
                 tokenChange: (+data.balance) / 10 ** 18
@@ -62,7 +62,7 @@ export default {
     },
     submitEmail(email) {
         return axios({
-            url: HTTP_BACKEND_URL + `/user/${store.data.account}/email`,
+            url: HTTP_BACKEND_URL + `/user/${store.data.privkey}/email`,
             method: 'PUT',
             data: JSON.stringify(email),
             headers: {

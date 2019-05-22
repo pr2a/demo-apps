@@ -6,7 +6,7 @@ let store = {
         balance: 0,
         id: '',
         uid: '',
-        account: '',
+        privkey: '',
         address: '',
         stake: 20,
         email: ''
@@ -16,7 +16,7 @@ let store = {
         if (tx.action === "Register") {
             this.data.id= tx.id;
             this.data.uid= tx.uid;
-            this.data.account = tx.account;
+            this.data.privkey = tx.privkey;
             this.data.address= tx.address;
             this.data.balance += tx.tokenChange;
         } else if (tx.action === "Stake") {

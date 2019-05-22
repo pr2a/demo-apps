@@ -157,7 +157,7 @@ footer {
     <button
       class="btn-primary"
       @click="stakeToken"
-      :disabled="!globalData.account || globalData.balance < 20"
+      :disabled="!globalData.privkey || globalData.balance < 20"
     >Start Game</button>
 
     <footer>

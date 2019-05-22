@@ -29,7 +29,7 @@
     <div class="content">
       <div class="logo"></div>
       <div class="msg">Your key has generated</div>
-      <div class="key">{{ globalData.account }}</div>
+      <div class="key">{{ globalData.privkey }}</div>
     </div>
     <button class="btn-primary" @click="$emit('start')">Start Game</button>
   </div>

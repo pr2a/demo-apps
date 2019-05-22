@@ -137,9 +137,11 @@ export default {
     },
     stakeToken() {
       playBackgroundMusic();
-      service.stakeToken(this.globalData.account, this.globalData.stake).then(() => {
-        this.$emit("stake", this.globalData.stake);
-      });
+      service
+        .stakeToken(this.globalData.privkey, this.globalData.stake)
+        .then(() => {
+          this.$emit("stake", this.globalData.stake);
+        });
     }
   }
 };
