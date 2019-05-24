@@ -77,7 +77,7 @@ footer {
   border-radius: 0.3em;
 }
 .btn-mini {
-  font-size: 1em;
+  font-size: 0.8em;
   background-color: transparent;
   border: 0;
   color: #482aff;
@@ -92,6 +92,38 @@ footer {
   font-size: 1em;
   background-color: #482bff;
 }
+
+.btn-small {
+  font-size: 0.85em;
+  background-color: #482bff;
+  border: 0; 
+  color: #ffffff;
+  outline: none;
+  &:disabled {
+    opacity: 0.5;
+    color: #ddd;
+  }
+}
+
+.email-text-style {
+  font-size: 0.6em;;
+  border-radius: 1em;
+  height: 1.5em;
+  width: 12.8em;
+  text-align: center;
+}
+
+.start-value {
+  padding: 0.5em;
+  border-radius: 0.3em;
+  font-family: Fira Sans, sans-serif;
+  // border: 0.15em solid #979797;
+  overflow: auto;
+  margin: 0 auto;
+  text-align: center;
+  margin-right: -0.02em;
+}
+
 </style>
 
 <template >
@@ -109,10 +141,11 @@ footer {
       </button>
     </div>
     <button
-      class="btn-primary start-btn"
+      class="btn-primary start-btn start-value"
       @click="stakeToken"
       :disabled="globalData.balance < 20"
     >Start</button>
+    </div> 
   </div>
 </template>
 
