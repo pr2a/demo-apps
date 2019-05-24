@@ -8,7 +8,7 @@
   flex-direction: row;
 }
 
-footer {
+.footer {
   margin: 1em auto 0;
   .btn-primary {
     font-size: 1em;
@@ -190,6 +190,67 @@ footer {
   text-align: center;
   text-decoration: none;
 }
+
+
+
+
+
+
+
+
+
+.btn-small {
+  font-size: 0.85em;
+  background-color: #482bff;
+  border: 0; 
+  color: #ffffff;
+  outline: none;
+  &:disabled {
+    opacity: 0.5;
+    color: #ddd;
+  }
+}
+
+.coupon-prompt-style {
+  font-size: 0.7em;
+  border-radius: 1em;
+  height: 1.5em;
+  width: 15.5em;
+  text-align: center;
+  padding: 1.35em;
+  margin-left: 23.5em;
+}
+
+.submit-value {
+  padding: 0.5em;
+  border-radius: 0.6em;
+  font-family: Fira Sans, sans-serif;
+  // border: 0.15em solid #979797;
+  overflow: auto;
+  text-align: center;
+  height: 2.3em;
+  width: 4em;
+  margin-top: -49.83em;
+  margin-bottom: 44.73em;
+  margin-left: 32.74em;
+}
+
+a:hover {
+  background-color: lightgreen;
+}
+
+.submit-value:hover {
+  border-bottom: 1px solid #0971f8;
+  color: #0971f8;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
 </style>
 
 <template>
@@ -207,6 +268,14 @@ footer {
           class="logo"
           target="_blank"
         ></a>
+        <textarea
+            v-model="message"
+            <input
+            class="coupon-prompt-style"
+            type="text"
+            v-model="email"
+            placeholder="Enter Coupon Code Here..."
+            >
         <div class="score-container" :style="{ width: boardSizePx + 'px' }">
           <div class="balance info-item" :style="infoItemStyle">
             <div class="label">
@@ -238,7 +307,6 @@ footer {
             </div>
           </div>
         </div>
-
         <div class="board-wrapper" :style="boardWrapperStyle">
           <div v-if="gameEnded || !gameStarted">
             <div class="overlay game-over-message appearing">
@@ -270,14 +338,17 @@ footer {
             ></Game>
           </transition>
         </div>
-
         <stake-row 
           v-if="!gameStarted" 
           @stake="startGame" 
           :style="stakeRowStyle" 
           @stakeToken="resetLevel"
         ></stake-row>
-        <footer class="flex-vertical" :style="{ width: boardSizePx + '100px' }" v-if="gameStarted">
+        <button
+          class="btn-small submit-value"
+          @click="sendCoupon"
+          >Submit</button>
+        <footer class="flex-vertical" :style="{ width: boardSizePx + '10px' }" v-if="gameStarted">
           <div class="flex-horizontal action-row">
             <span
               class="flex-grow level-text"
@@ -292,6 +363,7 @@ footer {
                 }"
               <font-awesome-icon icon="sync"></font-awesome-icon>
             </button>
+            
           </div>
         </footer>
         <div class="link-footer"></div>
@@ -440,8 +512,8 @@ export default {
     },
     iconClockStyle() {
       return {
-        width: this.boardSizePx / 12 + "px",
-        height: this.boardSizePx / 12 + "px"
+        width: this.boardSizePx / 12.5 + "px",
+        height: this.boardSizePx / 12.5 + "px"
       };
     },
     boardWrapperStyle() {
