@@ -34,7 +34,7 @@ footer {
 .game-over-message {
   font-weight: bold;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(255, 255, 255, 0.85);
   border-radius: 0.3em;
 }
 
@@ -255,9 +255,8 @@ footer {
                 <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">
                   <span
                     :style="gameTutorialSmallStyle"
-                  >Move cursor to adjacent cells to increase the number by 1. Win a level by making all numbers equal!</span>
+                  >Place bet (bottom left) and click “Start"</span>
                   <br>
-                  <br>Place bet (bottom left) and click “Start"
                 </p>
               </div>
             </div>
@@ -268,14 +267,13 @@ footer {
               <div class="content content-level10">
                 <div>
                   <p class="blur-text" :style="gameTutorialStyle">
-                    <span :style="gameTutorialSmallStyle">Congrats</span>
+                    <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">You finished level 10</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">Tweet your success!</span>
                     <br>
                     <br>
-                    <span :style="gameTutorialSmallStyle">Enter your BNB code in the tweet.</span>
                   </p>
                 </div>
                 <div class="buttons">
@@ -285,7 +283,7 @@ footer {
                                     twitter-user="harmonyprotocol"
                                     inline-template>
                       <network network="twitter">
-                        <a class="btn-twitter">
+                        <a class="btn-primary">
                           <i class="fab fa-twitter"></i> Tweet
                         </a>
                       </network>
@@ -294,16 +292,12 @@ footer {
 
                   <div>
                     <button class="btn-primary" @click="keepPlaying">
-                      Keep playing!
+                      Keep Playing!
                     </button>
                   </div>
                 </div>
                 <div>
-                <span class="what-is-coupon">
-                        <a href="http://harmony.one">
-                          What is BNB code
-                        </a>
-                    </span>
+                
                 </div>
               </div>
             </div>
