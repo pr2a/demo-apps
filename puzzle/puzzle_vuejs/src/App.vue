@@ -166,6 +166,21 @@ p {
 p + p {
   margin-top: 1em;
 }
+.btn-twitter {
+  cursor: pointer;
+  background: #00ACEE;
+  color: #fff;
+  border: 1px solid #0075a2;
+  padding: 1rem 1.5rem;
+  border-radius: 4px;
+}
+.btn-twitter:link, .btn-twitter:visited {
+  color: #fff;
+}
+.btn-twitter:active, .btn-twitter:hover {
+  background: #0075a2;
+  color: #fff;
+}
 </style>
 
 <template>

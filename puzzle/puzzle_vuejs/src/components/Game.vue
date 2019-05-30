@@ -58,7 +58,7 @@
 <template>
   <div class="board" :tabindex="tabIndex" :style="boardStyle">
     <div v-if="gameLevel === 1 && gameStarted" class="demo-arrow-1"></div>
-    <div v-if="gameLevel !== 1" class="click-inceptor"></div>
+    <div v-if="gameLevel !== 1 && !isLevel10" class="click-inceptor"></div>
     <div
       ref="cells"
       v-for="(value, i) in cells"
@@ -198,7 +198,8 @@ export default {
     boardSizePx: { type: Number, default: 0 },
     animationTimeMs: { type: Number, default: 150 },
     gameEnded: Boolean,
-    gameStarted: Boolean
+    gameStarted: Boolean,
+    isLevel10: Boolean
   },
   data() {
     return {
