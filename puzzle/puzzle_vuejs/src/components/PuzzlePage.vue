@@ -277,7 +277,7 @@ footer {
           :style="stakeRowStyle" 
           @stakeToken="resetLevel"
         ></stake-row>
-        <footer class="flex-vertical" :style="{ width: boardSizePx + '100px' }" v-if="gameStarted">
+        <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
           <div class="flex-horizontal action-row">
             <span
               class="flex-grow level-text"
@@ -290,7 +290,7 @@ footer {
                 visibility: gameEnded ? 'hidden':'visible',
                 fontSize: boardSizePx / 20 + 'px'
                 }"
-                >
+            >
               <font-awesome-icon icon="sync"></font-awesome-icon>
             </button>
           </div>
