@@ -290,6 +290,7 @@ footer {
                 visibility: gameEnded ? 'hidden':'visible',
                 fontSize: boardSizePx / 20 + 'px'
                 }"
+                >
               <font-awesome-icon icon="sync"></font-awesome-icon>
             </button>
           </div>
