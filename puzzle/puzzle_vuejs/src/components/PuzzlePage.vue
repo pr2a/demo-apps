@@ -271,10 +271,10 @@ footer {
           </transition>
         </div>
 
-        <stake-row 
-          v-if="!gameStarted" 
-          @stake="startGame" 
-          :style="stakeRowStyle" 
+        <stake-row
+          v-if="!gameStarted"
+          @stake="startGame"
+          :style="stakeRowStyle"
           @stakeToken="resetLevel"
         ></stake-row>
         <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
@@ -478,7 +478,15 @@ export default {
     resetLevel() {
       this.$refs[`game${this.levelIndex}`][0].reset();
     },
+    /***
+     * Track analytics current level
+     * @param level
+     */
+    gaTrack(level) {
+      this.$ga.event('puzzle-game', 'game-level', 'current-level', level)
+    },
     onLevelComplete(moves) {
+      this.gaTrack(this.levelIndex);
       if (this.levelIndex === this.levels.length - 1) {
         this.endGame();
         return;
