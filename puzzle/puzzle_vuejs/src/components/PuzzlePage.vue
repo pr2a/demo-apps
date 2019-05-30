@@ -6,7 +6,6 @@
   display: flex;
   flex: 1;
   flex-direction: row;
-  min-height: 55px;
 }
 
 footer {
@@ -49,12 +48,12 @@ footer {
 }
 
 .main-container {
-  height: 100vh;
+  height: 100%;
   .game-container {
     position: relative;
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
     .overlay {
       width: 100%;
       height: 100%;
@@ -170,7 +169,6 @@ footer {
   flex: 1;
 }
 .icon-clock,
-
 .icon-token {
   background-size: contain;
 }
@@ -204,7 +202,6 @@ footer {
     ></redeem-panel>
     <div class="main-container appearing">
       <div class="game-container" ref="gameContainer">
-        <!--<redeem-panel v-if="gameEnded && !globalData.email" :reward="reward"></redeem-panel>-->
         <a
           :href="'https://explorer2.harmony.one/#/address/' + globalData.address"
           class="logo"
@@ -218,8 +215,7 @@ footer {
             <div class="content">
               {{ globalData.balance }}
               <transition>
-                <span v-if="balanceIncrease!=''" class="number-increase"> {{ balanceIncrease }}
-                </span>
+                <span v-if="balanceIncrease!=''" class="number-increase">{{ balanceIncrease }}</span>
               </transition>
             </div>
           </div>
@@ -247,10 +243,11 @@ footer {
           <div v-if="gameEnded || !gameStarted">
             <div class="overlay game-over-message appearing">
               <div class="content content-tutorial">
-                <p :style="gameOverStyle" v-if="!globalData.account">Logging in...</p>
+                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging in...</p>
                 <p :style="gameOverStyle" v-else-if="gameEnded">Game over!</p>
                 <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">
-                  <span :style="gameTutorialSmallStyle"
+                  <span
+                    :style="gameTutorialSmallStyle"
                   >Move cursor to adjacent cells to increase the number by 1. Win a level by making all numbers equal!</span>
                   <br>
                   <br>Place bet (bottom left) and click “Start"
@@ -273,8 +270,14 @@ footer {
             ></Game>
           </transition>
         </div>
-        <stake-row v-if="!gameStarted" @stake="startGame" :style="stakeRowStyle" @stakeToken="resetLevel"></stake-row>
-        <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
+
+        <stake-row 
+          v-if="!gameStarted" 
+          @stake="startGame" 
+          :style="stakeRowStyle" 
+          @stakeToken="resetLevel"
+        ></stake-row>
+        <footer class="flex-vertical" :style="{ width: boardSizePx + '100px' }" v-if="gameStarted">
           <div class="flex-horizontal action-row">
             <span
               class="flex-grow level-text"
@@ -287,14 +290,11 @@ footer {
                 visibility: gameEnded ? 'hidden':'visible',
                 fontSize: boardSizePx / 20 + 'px'
                 }"
-            >
               <font-awesome-icon icon="sync"></font-awesome-icon>
             </button>
           </div>
         </footer>
-        <div class="fake-footer" v-if="isMobile"></div>
-        <div class="link-footer" v-if="!isMobile">
-        </div>
+        <div class="link-footer"></div>
       </div>
     </div>
   </div>
@@ -332,6 +332,22 @@ function getParameterByName(name) {
     : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+window.mobilecheck = function() {
+  var check = false;
+  (function(a) {
+    if (
+      /(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(
+        a
+      ) ||
+      /1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(
+        a.substr(0, 4)
+      )
+    )
+      check = true;
+  })(navigator.userAgent || navigator.vendor || window.opera);
+  return check;
+};
+
 export default {
   name: "PuzzlePage",
   components: {
@@ -354,7 +370,7 @@ export default {
       timer: null,
       timeIncrease: "",
       balanceIncrease: "",
-      isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent),
+      isMobile: mobilecheck(),
       reward: 0,
       cancelEmail: false
     };
@@ -386,14 +402,15 @@ export default {
       return { fontSize: this.boardSizePx / 6 + "px" };
     },
     //TODO
-    //can we find a better way to update the styles? 
-    //I don't want to have so many style related code in the view model. 
-    // Ideally it should only contain work-flow related logic. 
-    // Possible solution: setting the font-size of container and use em to control those sizes using css? 
+    //can we find a better way to update the styles?
+    //I don't want to have so many style related code in the view model.
+    // Ideally it should only contain work-flow related logic.
+    // Possible solution: setting the font-size of container and use em to control those sizes using css?
     ///Then we only need to use JS to change one thing -- font-size of container.
     gameTutorialStyle() {
       return { fontSize: this.boardSizePx / 14 + "px" };
     },
+    /*MOVE CURSOR TO ADJACENT CELLS...*/
     gameTutorialSmallStyle() {
       return { fontSize: this.boardSizePx / 16 + "px" };
     },
@@ -403,6 +420,7 @@ export default {
     levelTextStyle() {
       return { fontSize: this.boardSizePx / 18 + "px" };
     },
+    /*tokens and start button on bottom*/
     stakeRowStyle() {
       return {
         width: this.boardSizePx + "px",
@@ -460,13 +478,12 @@ export default {
       this.$refs[`game${this.levelIndex}`][0].reset();
     },
     onLevelComplete(moves) {
-
       if (this.levelIndex === this.levels.length - 1) {
         this.endGame();
         return;
       }
       service
-        .completeLevel(this.globalData.account, this.levelIndex + 1, moves)
+        .completeLevel(this.globalData.privkey, this.levelIndex + 1, moves)
         .then(rewards => {
           this.levelIndex++;
           let timeChange = 15;

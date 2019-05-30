@@ -85,8 +85,12 @@ html {
 }
 
 .btn-primary {
-  padding: 0.5em 1.5em;
-  font-size: 1.2em;
+  padding: 0.7em 1.0em;
+  font-size: 1.1em;
+  margin-right: 0em;
+  margin-left: 0em;
+  margin-top: 1em;
+
 }
 
 .btn-mini {
