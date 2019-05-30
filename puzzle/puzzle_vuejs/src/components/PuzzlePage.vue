@@ -47,6 +47,13 @@ footer {
   justify-content: center;
 }
 
+.content-level10 {
+  background: rgba(255, 255, 255, 0.2);
+  .buttons {
+    margin: 20px 0;
+  }
+}
+
 .main-container {
   height: 100%;
   .game-container {
@@ -255,6 +262,53 @@ footer {
               </div>
             </div>
           </div>
+
+          <div v-if="isLevel10">
+            <div class="overlay game-over-message appearing">
+              <div class="content content-level10">
+                <div>
+                  <p class="blur-text" :style="gameTutorialStyle">
+                    <span :style="gameTutorialSmallStyle">Congrats</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">You finished level 10</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">Tweet your success!</span>
+                    <br>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">Enter your BNB code in the tweet.</span>
+                  </p>
+                </div>
+                <div class="buttons">
+                  <div>
+                    <social-sharing :title="twitterTitle"
+                                    url=""
+                                    twitter-user="harmonyprotocol"
+                                    inline-template>
+                      <network network="twitter">
+                        <a class="btn-twitter">
+                          <i class="fab fa-twitter"></i> Tweet
+                        </a>
+                      </network>
+                    </social-sharing>
+                  </div>
+
+                  <div>
+                    <button class="btn-primary" @click="keepPlaying">
+                      Keep playing!
+                    </button>
+                  </div>
+                </div>
+                <div>
+                <span class="what-is-coupon">
+                        <a href="http://harmony.one">
+                          What is BNB code
+                        </a>
+                    </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <transition name="fade" v-for="(level, i) in levels" :key="i">
             <Game
               :ref="'game' + i"
@@ -263,6 +317,7 @@ footer {
               :board-size-px="boardSizePx"
               :game="level"
               :gameLevel="levelIndex+1"
+              :isLevel10="isLevel10"
               :gameStarted="gameStarted"
               :gameEnded="gameEnded"
               @completeLevel="onLevelComplete"
@@ -367,6 +422,7 @@ export default {
       size: 3,
       gameStarted: false,
       gameEnded: false,
+      isLevel10: false,
       secondsLeft: InitialSeconds,
       timer: null,
       timeIncrease: "",
@@ -453,6 +509,13 @@ export default {
     },
     level() {
       return this.levels[this.levelIndex];
+    },
+    /**
+     * Twitter title
+     * @return {string}
+     */
+    twitterTitle() {
+      return `I won level 10 of #harmonypuzzle my coupon code is 12345678  #harmonyprotocol play it here https://puzzle.harmony.one https://explorer2.harmony.one/#/address/${this.globalData.address}`
     }
   },
   destroyed() {
@@ -487,6 +550,12 @@ export default {
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
+      if (this.levelIndex === 9) {
+        this.endLevel10()
+        return;
+      }
+
+      // TODO: nxqd We will improve this logic when we have the coupon implemented.
       if (this.levelIndex === this.levels.length - 1) {
         this.endGame();
         return;
@@ -506,6 +575,11 @@ export default {
           });
         });
     },
+    endLevel10() {
+      stopBackgroundMusic()
+      this.isLevel10 = true;
+      clearInterval(this.timer);
+    },
     endGame() {
       stopBackgroundMusic();
       this.gameEnded = true;
@@ -519,6 +593,20 @@ export default {
     },
     closeEmailPopup() {
       this.cancelEmail = true;
+    },
+    keepPlaying() {
+      playBackgroundMusic();
+      this.isLevel10 = false;
+      this.levelIndex++;
+      this.startTimer();
+    },
+    startTimer() {
+      this.timer = setInterval(() => {
+        this.secondsLeft--;
+        if (this.secondsLeft <= 0) {
+          this.endGame();
+        }
+      }, 1000);
     }
   }
 };
