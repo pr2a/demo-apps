@@ -281,8 +281,8 @@ footer {
                 <div class="buttons">
                   <div>
                     <social-sharing :title="twitterTitle"
-                                    hashtags="harmonyprotocol"
                                     url=""
+                                    twitter-user="harmonyprotocol"
                                     inline-template>
                       <network network="twitter">
                         <a class="btn-twitter">
@@ -515,7 +515,7 @@ export default {
      * @return {string}
      */
     twitterTitle() {
-      return `I won level 10 of #harmonypuzzle my coupon code is 12345678  #harmonyprotocol play it here https://puzzle.harmony.one https://explorer2.harmony.one/#/address/${this.globalData.address} via`
+      return `I won level 10 of #harmonypuzzle my coupon code is 12345678  #harmonyprotocol play it here https://puzzle.harmony.one https://explorer2.harmony.one/#/address/${this.globalData.address}`
     }
   },
   destroyed() {
