@@ -541,7 +541,15 @@ export default {
     resetLevel() {
       this.$refs[`game${this.levelIndex}`][0].reset();
     },
+    /***
+     * Track analytics current level
+     * @param level
+     */
+    gaTrack(level) {
+      this.$ga.event('puzzle-game', 'game-level', 'current-level', level)
+    },
     onLevelComplete(moves) {
+      this.gaTrack(this.levelIndex);
       if (this.levelIndex === 9) {
         this.endLevel10()
         return;
