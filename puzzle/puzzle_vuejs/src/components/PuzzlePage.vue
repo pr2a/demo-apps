@@ -8,7 +8,7 @@
   flex-direction: row;
 }
 
-.footer {
+footer {
   margin: 1em auto 0;
   .btn-primary {
     font-size: 1em;
@@ -191,14 +191,6 @@
   text-decoration: none;
 }
 
-
-
-
-
-
-
-
-
 .btn-small {
   font-size: 0.85em;
   background-color: #482bff;
@@ -230,9 +222,10 @@
   text-align: center;
   height: 2.3em;
   width: 4em;
-  margin-top: -49.83em;
-  margin-bottom: 44.73em;
+  margin-top: -9.83em;
+  margin-bottom: 22.73em;
   margin-left: 32.74em;
+
 }
 
 a:hover {
@@ -244,12 +237,6 @@ a:hover {
   color: #0971f8;
   cursor: pointer;
 }
-
-
-
-
-
-
 
 </style>
 
@@ -268,26 +255,22 @@ a:hover {
           class="logo"
           target="_blank"
         ></a>
-        <textarea
-            v-model="message"
-            <input
-            class="coupon-prompt-style"
-            type="text"
-            v-model="email"
-            placeholder="Enter Coupon Code Here..."
-            >
+        <!-- keeps board in place -->
         <div class="score-container" :style="{ width: boardSizePx + 'px' }">
           <div class="balance info-item" :style="infoItemStyle">
+            <!-- icon token next to money amount (top left) -->
             <div class="label">
               <div class="icon-token" :style="iconTokenStyle"></div>
             </div>
             <div class="content">
               {{ globalData.balance }}
+              <!-- for amount of token increase -->
               <transition>
                 <span v-if="balanceIncrease!=''" class="number-increase">{{ balanceIncrease }}</span>
               </transition>
             </div>
           </div>
+          <!-- makes countdown white and adds click icon -->
           <div class="count-down info-item" :style="infoItemStyle">
             <div class="label">
               <div class="icon-clock" :style="iconClockStyle"></div>
@@ -307,12 +290,13 @@ a:hover {
             </div>
           </div>
         </div>
+        <!-- positioning of the board if game has ENDED or NOT STARTED-->
         <div class="board-wrapper" :style="boardWrapperStyle">
           <div v-if="gameEnded || !gameStarted">
             <div class="overlay game-over-message appearing">
               <div class="content content-tutorial">
-                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging in...</p>
-                <p :style="gameOverStyle" v-else-if="gameEnded">Game over!</p>
+                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging In...</p>
+                <p :style="gameOverStyle" v-else-if="gameEnded">Game Over!</p>
                 <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">
                   <span
                     :style="gameTutorialSmallStyle"
@@ -323,6 +307,7 @@ a:hover {
               </div>
             </div>
           </div>
+          <!-- board pieces -->
           <transition name="fade" v-for="(level, i) in levels" :key="i">
             <Game
               :ref="'game' + i"
@@ -338,16 +323,13 @@ a:hover {
             ></Game>
           </transition>
         </div>
+        <!-- if game has NOT STARTED, adds bottom 2 buttons-->
         <stake-row 
           v-if="!gameStarted" 
           @stake="startGame" 
           :style="stakeRowStyle" 
           @stakeToken="resetLevel"
         ></stake-row>
-        <button
-          class="btn-small submit-value"
-          @click="sendCoupon"
-          >Submit</button>
         <footer class="flex-vertical" :style="{ width: boardSizePx + '10px' }" v-if="gameStarted">
           <div class="flex-horizontal action-row">
             <span
@@ -362,8 +344,7 @@ a:hover {
                 fontSize: boardSizePx / 20 + 'px'
                 }"
               <font-awesome-icon icon="sync"></font-awesome-icon>
-            </button>
-            
+            </button> 
           </div>
         </footer>
         <div class="link-footer"></div>
