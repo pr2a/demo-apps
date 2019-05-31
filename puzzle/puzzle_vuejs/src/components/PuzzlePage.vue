@@ -252,20 +252,20 @@ footer {
         </div>
 
         <div class="board-wrapper" :style="boardWrapperStyle">
-          <div v-if="gameEnded || !gameStarted">
-            <div class="overlay game-over-message appearing">
-              <div class="content content-tutorial">
-                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging in...</p>
-                <p :style="gameOverStyle" v-else-if="gameEnded">Game over!</p>
-                <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">
-                  <span
-                    :style="gameTutorialSmallStyle"
-                  >Place bet (bottom left) and click “Start"</span>
-                  <br>
-                </p>
-              </div>
-            </div>
-          </div>
+<!--          <div v-if="gameEnded || !gameStarted">-->
+<!--            <div class="overlay game-over-message appearing">-->
+<!--              <div class="content content-tutorial">-->
+<!--                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging in...</p>-->
+<!--                <p :style="gameOverStyle" v-else-if="gameEnded">Game over!</p>-->
+<!--                <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">-->
+<!--                  <span-->
+<!--                    :style="gameTutorialSmallStyle"-->
+<!--                  >Place bet (bottom left) and click “Start"</span>-->
+<!--                  <br>-->
+<!--                </p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
 
           <div v-if="isLevel10">
             <div class="overlay game-over-message appearing">
@@ -422,7 +422,8 @@ export default {
     return {
       globalData: store.data,
       levelIndex: 0,
-      levels: [],
+      // levels: [],
+      levels: levels(), // start with level 0 instead of demo
       boardSizePx: 0,
       size: 3,
       gameStarted: false,

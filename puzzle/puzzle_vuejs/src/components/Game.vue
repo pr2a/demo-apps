@@ -57,7 +57,7 @@
 
 <template>
   <div class="board" :tabindex="tabIndex" :style="boardStyle">
-    <div v-if="gameLevel === 1 && gameStarted" class="demo-arrow-1"></div>
+    <div v-if="gameLevel === 1" class="demo-arrow-1"></div>
     <div v-if="gameLevel !== 1 && !isLevel10" class="click-inceptor"></div>
     <div
       ref="cells"
