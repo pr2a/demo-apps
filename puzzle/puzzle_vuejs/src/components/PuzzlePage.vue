@@ -283,6 +283,9 @@ footer {
                     <br>
                   </p>
                 </div>
+                <div v-if="this.levelIndex === 99">
+                  <Fireworks/>
+                </div>
                 <div class="buttons">
                   <div>
                     <social-sharing :title="twitterTitle"
@@ -373,6 +376,7 @@ import service from "../service";
 import store from "../store";
 import { levels } from "../level-generator";
 import { setInterval, clearInterval } from "timers";
+import Fireworks from "./Fireworks";
 
 const InitialSeconds = 30;
 function guid() {
@@ -416,7 +420,8 @@ export default {
     Chip,
     StakeRow,
     TxHistoryLink,
-    RedeemPanel
+    RedeemPanel,
+    Fireworks
   },
   data() {
     return {
