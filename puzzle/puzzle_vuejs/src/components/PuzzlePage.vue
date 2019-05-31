@@ -304,9 +304,9 @@ footer {
                       Keep Playing!
                     </button>
 
-                    <button v-if="gameEnded" class="btn-primary" @click="restartGame">
-                      Play again!
-                    </button>
+                   <button v-if="gameEnded" class="btn-primary" @click="restartGame">
+                       Play again! 
+                     </button>
                   </div>
                 </div>
                 <div>
@@ -525,7 +525,7 @@ export default {
      * @return {string}
      */
     twitterTitle() {
-      return `I won ${this.globalData.balance} of $ONE Tokens by playing #harmonypuzzle! see my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} play it here https://puzzle.harmony.one (KYC & non-US only)`
+      return `I finished level ${this.levelIndex+1} of #harmonypuzzle! See my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} Play it at https://puzzle.harmony.one`
     }
   },
   destroyed() {
