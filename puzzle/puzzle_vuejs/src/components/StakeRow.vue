@@ -49,7 +49,10 @@ footer {
 }
 .btn-mini.start-btn {
   width: auto;
-  padding: 0 1em;
+}
+.start-btn {
+  padding: 0.55rem 2.5rem;
+  margin-top: 0;
 }
 .stake-amount {
   margin: 0 0.5em;

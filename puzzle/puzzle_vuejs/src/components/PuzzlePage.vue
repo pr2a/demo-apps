@@ -51,6 +51,11 @@ footer {
   background: rgba(255, 255, 255, 0.2);
   .buttons {
     margin: 20px 0;
+    width: 150px;
+    margin: 0 auto;
+    .btn-primary {
+      width: 100%;
+    }
   }
 }
 
@@ -201,12 +206,12 @@ footer {
 
 <template>
   <div id="app">
-    <redeem-panel
-      v-if="gameEnded && !globalData.email && !cancelEmail"
-      :reward="reward"
-      :boardSizePx="boardSizePx"
-      @cancelEmail="closeEmailPopup"
-    ></redeem-panel>
+<!--    <redeem-panel-->
+<!--      v-if="gameEnded && !globalData.email && !cancelEmail"-->
+<!--      :reward="reward"-->
+<!--      :boardSizePx="boardSizePx"-->
+<!--      @cancelEmail="closeEmailPopup"-->
+<!--    ></redeem-panel>-->
     <div class="main-container appearing">
       <div class="game-container" ref="gameContainer">
         <a
@@ -269,7 +274,9 @@ footer {
                   <p class="blur-text" :style="gameTutorialStyle">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle">You finished level 10</span>
+                    <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex+1 }}</span>
+                    <br>
+                    <span v-if="gameEnded" :style="gameTutorialSmallStyle">You just won {{ reward }} Harmony Tokens!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">Tweet your success!</span>
                     <br>
@@ -291,13 +298,17 @@ footer {
                   </div>
 
                   <div>
-                    <button class="btn-primary" @click="keepPlaying">
+                    <button v-if="!gameEnded" class="btn-primary" @click="keepPlaying">
                       Keep Playing!
+                    </button>
+
+                    <button v-if="gameEnded" class="btn-primary" @click="restartGame">
+                      Play again!
                     </button>
                   </div>
                 </div>
                 <div>
-                
+
                 </div>
               </div>
             </div>
@@ -576,6 +587,7 @@ export default {
     },
     endGame() {
       stopBackgroundMusic();
+      this.isLevel10 = true;
       this.gameEnded = true;
       this.gameStarted = false;
       store.data.stake = 20;
@@ -601,6 +613,13 @@ export default {
           this.endGame();
         }
       }, 1000);
+    },
+
+    /**
+     * Reload game by refresh the page.
+     */
+    restartGame() {
+      window.location.reload();
     }
   }
 };
