@@ -552,7 +552,8 @@ export default {
      * @param level
      */
     gaTrack(level) {
-      this.$ga.event('puzzle-game', 'game-level', 'current-level', level)
+      const userLevel = `user-game-level-${level}`
+      this.$ga.event('puzzle-game', 'game-level', userLevel, 1)
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
