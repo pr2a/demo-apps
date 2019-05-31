@@ -276,9 +276,9 @@ footer {
                     <br>
                     <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex+1 }}</span>
                     <br>
-                    <span v-if="gameEnded" :style="gameTutorialSmallStyle">You just won {{ reward }} Harmony Tokens!</span>
+                    <span v-if="gameEnded" :style="gameTutorialSmallStyle">Tweet your success!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle">Tweet your success!</span>
+                    <span :style="gameTutorialSmallStyle"></span>
                     <br>
                     <br>
                   </p>
@@ -290,7 +290,6 @@ footer {
                   <div>
                     <social-sharing :title="twitterTitle"
                                     url=""
-                                    twitter-user="harmonyprotocol"
                                     inline-template>
                       <network network="twitter">
                         <a class="btn-primary">
@@ -526,7 +525,7 @@ export default {
      * @return {string}
      */
     twitterTitle() {
-      return `I won ${this.globalData.balance} of $ONE Tokens by playing #harmonypuzzle! see my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} play it here https://puzzle.harmony.one `
+      return `I won ${this.globalData.balance} of $ONE Tokens by playing #harmonypuzzle! see my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} play it here https://puzzle.harmony.one (KYC & non-US only)`
     }
   },
   destroyed() {
