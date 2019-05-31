@@ -88,3 +88,4 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
 
 #versions
 0.5
+0.6 twitter integration
