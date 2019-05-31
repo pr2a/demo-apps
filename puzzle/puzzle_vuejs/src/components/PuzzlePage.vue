@@ -270,7 +270,7 @@ footer {
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
                     <br>
-                    <span :style="gameTutorialSmallStyle">You won {{ this.globalData.balance }} ONE Tokens!</span>
+                    <span :style="gameTutorialSmallStyle">You won {{ this.globalData.balance }} ONE Tokens.</span>
                     <br>
                     <br>
                     <span :style="gameTutorialSmallStyle">Tweet your success!</span>
@@ -546,7 +546,7 @@ export default {
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
-      if (this.levelIndex === 9) {
+      if (this.levelIndex === 110) {
         this.endLevel10()
         return;
       }
