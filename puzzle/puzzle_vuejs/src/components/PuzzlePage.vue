@@ -304,9 +304,9 @@ footer {
                       Keep Playing!
                     </button>
 
-          <!--           <button v-if="gameEnded" class="btn-primary" @click="restartGame">-->
-          <!--             Play again! -->
-           <!--          </button>-->
+                   <button v-if="gameEnded" class="btn-primary" @click="restartGame">
+                       Play again! 
+                     </button>
                   </div>
                 </div>
                 <div>
