@@ -269,7 +269,9 @@ footer {
                   <p class="blur-text" :style="gameTutorialStyle">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle">You won {{ this.globalData.balance }} $ONE!</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">You won {{ this.globalData.balance }} ONE Tokens!</span>
+                    <br>
                     <br>
                     <span :style="gameTutorialSmallStyle">Tweet your success!</span>
                     <br>
