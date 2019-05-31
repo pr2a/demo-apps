@@ -51,6 +51,11 @@ footer {
   background: rgba(255, 255, 255, 0.2);
   .buttons {
     margin: 20px 0;
+    width: 150px;
+    margin: 0 auto;
+    .btn-primary {
+      width: 100%;
+    }
   }
 }
 
@@ -201,12 +206,12 @@ footer {
 
 <template>
   <div id="app">
-    <redeem-panel
-      v-if="gameEnded && !globalData.email && !cancelEmail"
-      :reward="reward"
-      :boardSizePx="boardSizePx"
-      @cancelEmail="closeEmailPopup"
-    ></redeem-panel>
+<!--    <redeem-panel-->
+<!--      v-if="gameEnded && !globalData.email && !cancelEmail"-->
+<!--      :reward="reward"-->
+<!--      :boardSizePx="boardSizePx"-->
+<!--      @cancelEmail="closeEmailPopup"-->
+<!--    ></redeem-panel>-->
     <div class="main-container appearing">
       <div class="game-container" ref="gameContainer">
         <a
@@ -247,20 +252,20 @@ footer {
         </div>
 
         <div class="board-wrapper" :style="boardWrapperStyle">
-          <div v-if="gameEnded || !gameStarted">
-            <div class="overlay game-over-message appearing">
-              <div class="content content-tutorial">
-                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging in...</p>
-                <p :style="gameOverStyle" v-else-if="gameEnded">Game over!</p>
-                <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">
-                  <span
-                    :style="gameTutorialSmallStyle"
-                  >Place bet (bottom left) and click “Start"</span>
-                  <br>
-                </p>
-              </div>
-            </div>
-          </div>
+<!--          <div v-if="gameEnded || !gameStarted">-->
+<!--            <div class="overlay game-over-message appearing">-->
+<!--              <div class="content content-tutorial">-->
+<!--                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging in...</p>-->
+<!--                <p :style="gameOverStyle" v-else-if="gameEnded">Game over!</p>-->
+<!--                <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">-->
+<!--                  <span-->
+<!--                    :style="gameTutorialSmallStyle"-->
+<!--                  >Place bet (bottom left) and click “Start"</span>-->
+<!--                  <br>-->
+<!--                </p>-->
+<!--              </div>-->
+<!--            </div>-->
+<!--          </div>-->
 
           <div v-if="isLevel10">
             <div class="overlay game-over-message appearing">
@@ -269,14 +274,17 @@ footer {
                   <p class="blur-text" :style="gameTutorialStyle">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
+                    <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex+1 }}</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle">You won {{ this.globalData.balance }} ONE Tokens.</span>
-                    <br>
+                    <span v-if="gameEnded" :style="gameTutorialSmallStyle">You just won {{ reward }} Harmony Tokens!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">Tweet your success!</span>
                     <br>
                     <br>
                   </p>
+                </div>
+                <div v-if="this.levelIndex === 99">
+                  <Fireworks/>
                 </div>
                 <div class="buttons">
                   <div>
@@ -293,13 +301,17 @@ footer {
                   </div>
 
                   <div>
-                    <button class="btn-primary" @click="keepPlaying">
+                    <button v-if="!gameEnded" class="btn-primary" @click="keepPlaying">
                       Keep Playing!
+                    </button>
+
+                    <button v-if="gameEnded" class="btn-primary" @click="restartGame">
+                      Play again!
                     </button>
                   </div>
                 </div>
                 <div>
-                
+
                 </div>
               </div>
             </div>
@@ -364,6 +376,7 @@ import service from "../service";
 import store from "../store";
 import { levels } from "../level-generator";
 import { setInterval, clearInterval } from "timers";
+import Fireworks from "./Fireworks";
 
 const InitialSeconds = 30;
 function guid() {
@@ -407,13 +420,15 @@ export default {
     Chip,
     StakeRow,
     TxHistoryLink,
-    RedeemPanel
+    RedeemPanel,
+    Fireworks
   },
   data() {
     return {
       globalData: store.data,
       levelIndex: 0,
-      levels: [],
+      // levels: [],
+      levels: levels(), // start with level 0 instead of demo
       boardSizePx: 0,
       size: 3,
       gameStarted: false,
@@ -542,7 +557,8 @@ export default {
      * @param level
      */
     gaTrack(level) {
-      this.$ga.event('puzzle-game', 'game-level', 'current-level', level)
+      const userLevel = `user-game-level-${level}`
+      this.$ga.event('puzzle-game', 'game-level', userLevel, 1)
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
@@ -578,6 +594,7 @@ export default {
     },
     endGame() {
       stopBackgroundMusic();
+      this.isLevel10 = true;
       this.gameEnded = true;
       this.gameStarted = false;
       store.data.stake = 20;
@@ -603,6 +620,13 @@ export default {
           this.endGame();
         }
       }, 1000);
+    },
+
+    /**
+     * Reload game by refresh the page.
+     */
+    restartGame() {
+      window.location.reload();
     }
   }
 };
