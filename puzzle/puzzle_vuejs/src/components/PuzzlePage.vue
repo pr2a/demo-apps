@@ -546,7 +546,7 @@ export default {
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
-      if (this.levelIndex > 9) {
+      if (this.levelIndex > 110) {
         this.endLevel10()
         return;
       }
