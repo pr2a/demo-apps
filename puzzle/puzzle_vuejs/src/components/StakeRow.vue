@@ -115,7 +115,7 @@ footer {
       class="btn-primary start-btn"
       @click="stakeToken"
       :disabled="globalData.balance < 20"
-    >Start</button>
+    >Play</button>
   </div>
 </template>
 
