@@ -546,7 +546,7 @@ export default {
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
-      if (this.levelIndex === 110) {
+      if (this.levelIndex > 9) {
         this.endLevel10()
         return;
       }
@@ -573,7 +573,7 @@ export default {
     },
     endLevel10() {
       stopBackgroundMusic()
-      this.isLevel10 = true;
+      this.isLevel10 = false;
       clearInterval(this.timer);
     },
     endGame() {
