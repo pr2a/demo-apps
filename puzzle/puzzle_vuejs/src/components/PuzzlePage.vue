@@ -269,7 +269,9 @@ footer {
                   <p class="blur-text" :style="gameTutorialStyle">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle">You finished level 10</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">You won {{ this.globalData.balance }} ONE Tokens.</span>
+                    <br>
                     <br>
                     <span :style="gameTutorialSmallStyle">Tweet your success!</span>
                     <br>
@@ -509,7 +511,7 @@ export default {
      * @return {string}
      */
     twitterTitle() {
-      return `I won level 10 of #harmonypuzzle my coupon code is 12345678  #harmonyprotocol play it here https://puzzle.harmony.one https://explorer2.harmony.one/#/address/${this.globalData.address}`
+      return `I won ${this.globalData.balance} of $ONE Tokens by playing #harmonypuzzle! see my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} play it here https://puzzle.harmony.one `
     }
   },
   destroyed() {
@@ -544,7 +546,7 @@ export default {
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
-      if (this.levelIndex === 9) {
+      if (this.levelIndex > 110) {
         this.endLevel10()
         return;
       }
@@ -571,7 +573,7 @@ export default {
     },
     endLevel10() {
       stopBackgroundMusic()
-      this.isLevel10 = true;
+      this.isLevel10 = false;
       clearInterval(this.timer);
     },
     endGame() {
