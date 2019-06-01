@@ -305,8 +305,8 @@ footer {
                     </button>
 
                    <button v-if="gameEnded" class="btn-primary" @click="restartGame">
-                       Play again! 
-                     </button>
+                       Play again!  
+                     </button>  
                   </div>
                 </div>
                 <div>
@@ -334,11 +334,12 @@ footer {
         </div>
 
         <stake-row
-          v-if="!gameStarted"
+          v-if="!gameStarted && !gameEnded"
           @stake="startGame"
           :style="stakeRowStyle"
           @stakeToken="resetLevel"
         ></stake-row>
+   
         <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
           <div class="flex-horizontal action-row">
             <span
