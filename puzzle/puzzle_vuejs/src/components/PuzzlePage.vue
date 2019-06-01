@@ -274,7 +274,7 @@ footer {
                   <p class="blur-text" :style="gameTutorialStyle">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex+1 }}</span>
+                    <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
                     <br>
                     <span v-if="gameEnded" :style="gameTutorialSmallStyle">Tweet your success!</span>
                     <br>
@@ -304,9 +304,9 @@ footer {
                       Keep Playing!
                     </button>
 
-                   <button v-if="gameEnded" class="btn-primary" @click="restartGame">
-                       Play again!  
-                     </button>  
+            <!--        <button v-if="gameEnded" class="btn-primary" @click="restartGame">-->
+          <!--              Play again!  -->
+            <!--          </button>  -->
                   </div>
                 </div>
                 <div>
@@ -355,6 +355,18 @@ footer {
                 }"
             >
               <font-awesome-icon icon="sync"></font-awesome-icon>
+            </button>
+          </div>
+        </footer>
+        <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameEnded">
+          <div class="flex-horizontal action-row">
+          <span
+              class="flex-grow level-text"
+              :style="levelTextStyle"
+            >Level: {{ levelIndex + 1 }} / {{ levels.length }}</span>
+            <button v-if="gameEnded"  class="btn-primary" @click="restartGame">
+                       Play again!  
+                     </button>
             </button>
           </div>
         </footer>
@@ -526,7 +538,7 @@ export default {
      * @return {string}
      */
     twitterTitle() {
-      return `I finished level ${this.levelIndex+1} of #harmonypuzzle! See my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} Play it at https://puzzle.harmony.one`
+      return `I finished level ${this.levelIndex} of #harmonypuzzle! See my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} Play it at https://puzzle.harmony.one`
     }
   },
   destroyed() {
