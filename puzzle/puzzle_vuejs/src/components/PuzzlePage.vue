@@ -305,8 +305,8 @@ footer {
                     </button>
 
                    <button v-if="gameEnded" class="btn-primary" @click="restartGame">
-                       Play again! 
-                     </button>
+                       Play again!  
+                     </button>  
                   </div>
                 </div>
                 <div>
@@ -334,11 +334,12 @@ footer {
         </div>
 
         <stake-row
-          v-if="!gameStarted"
+          v-if="!gameStarted && !gameEnded"
           @stake="startGame"
           :style="stakeRowStyle"
           @stakeToken="resetLevel"
         ></stake-row>
+   
         <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
           <div class="flex-horizontal action-row">
             <span
@@ -377,7 +378,7 @@ import { levels } from "../level-generator";
 import { setInterval, clearInterval } from "timers";
 import Fireworks from "./Fireworks";
 
-const InitialSeconds = 30;
+const InitialSeconds = 10;
 function guid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
@@ -575,7 +576,7 @@ export default {
         .completeLevel(this.globalData.privkey, this.levelIndex + 1, moves)
         .then(rewards => {
           this.levelIndex++;
-          let timeChange = 15;
+          let timeChange = 5;
           this.secondsLeft += timeChange;
           this.timeIncrease = `+${timeChange}`;
           this.balanceIncrease = `+${rewards}`;
