@@ -271,7 +271,7 @@ footer {
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
                 <div>
-                  <p class="blur-text" :style="gameTutorialStyle">
+                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex >= 1">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
@@ -283,10 +283,21 @@ footer {
                     <br>
                   </p>
                 </div>
+                <div>
+                <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex == 0">
+                    <span :style="gameTutorialSmallStyle">Don't lose hope!</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">Try Again!</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle"></span>
+                    <br>
+
+                  </p>
+                </div>
                 <div v-if="this.levelIndex === 99">
                   <Fireworks/>
                 </div>
-                <div class="buttons">
+                <div class="buttons" v-if="this.levelIndex >= 1">
                   <div>
                     <social-sharing :title="twitterTitle"
                                     url=""
@@ -390,7 +401,7 @@ import { levels } from "../level-generator";
 import { setInterval, clearInterval } from "timers";
 import Fireworks from "./Fireworks";
 
-const InitialSeconds = 30;
+const InitialSeconds = 5;
 function guid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
@@ -588,7 +599,7 @@ export default {
         .completeLevel(this.globalData.privkey, this.levelIndex + 1, moves)
         .then(rewards => {
           this.levelIndex++;
-          let timeChange = 15;
+          let timeChange = 5;
           this.secondsLeft += timeChange;
           this.timeIncrease = `+${timeChange}`;
           this.balanceIncrease = `+${rewards}`;
