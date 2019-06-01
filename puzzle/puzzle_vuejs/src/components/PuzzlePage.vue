@@ -283,17 +283,24 @@ footer {
                     <br>
                   </p>
                 </div>
-                <div>
-                <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex == 0">
+
+                <div v-if="!isZeroBalance">
+                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex == 0">
                     <span :style="gameTutorialSmallStyle">Don't lose hope!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">Try Again!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle"></span>
                     <br>
-
                   </p>
                 </div>
+
+                <div v-if="isZeroBalance">
+                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex == 0">
+                    <span :style="gameTutorialSmallStyle">You lost all your TOKENS :( < Replace actual text here > </span>
+                  </p>
+                </div>
+
                 <div v-if="this.levelIndex === 99">
                   <Fireworks/>
                 </div>
@@ -315,9 +322,9 @@ footer {
                       Keep Playing!
                     </button>
 
-            <!--        <button v-if="gameEnded" class="btn-primary" @click="restartGame">-->
-          <!--              Play again!  -->
-            <!--          </button>  -->
+                    <button v-if="gameEnded && !isZeroBalance" class="btn-primary" @click="restartGame">
+                      Play again!
+                    </button>
                   </div>
                 </div>
                 <div>
@@ -350,7 +357,7 @@ footer {
           :style="stakeRowStyle"
           @stakeToken="resetLevel"
         ></stake-row>
-   
+
         <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
           <div class="flex-horizontal action-row">
             <span
@@ -375,9 +382,8 @@ footer {
               class="flex-grow level-text"
               :style="levelTextStyle"
             >Level: {{ levelIndex + 1 }} / {{ levels.length }}</span>
-            <button v-if="gameEnded"  class="btn-primary" @click="restartGame">
-                       Play again!  
-                     </button>
+            <button v-if="gameEnded && !isZeroBalance"  class="btn-primary" @click="restartGame">
+              Play again!
             </button>
           </div>
         </footer>
@@ -401,7 +407,7 @@ import { levels } from "../level-generator";
 import { setInterval, clearInterval } from "timers";
 import Fireworks from "./Fireworks";
 
-const InitialSeconds = 30;
+const InitialSeconds = 1;
 function guid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
@@ -550,7 +556,16 @@ export default {
      */
     twitterTitle() {
       return `I finished level ${this.levelIndex} of #harmonypuzzle! See my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} Play it at https://puzzle.harmony.one`
-    }
+    },
+
+    /**
+     * Check if balance is zero.
+     * @return {boolean}
+     */
+    isZeroBalance() {
+      console.log("eeeeeeee balance", this.globalData.balance);
+      return this.globalData.balance <= 0;
+    },
   },
   destroyed() {
     // Remove event change screen
@@ -585,12 +600,12 @@ export default {
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
+
       if (this.levelIndex > 110) {
         this.endLevel10()
         return;
       }
 
-      // TODO: nxqd We will improve this logic when we have the coupon implemented.
       if (this.levelIndex === this.levels.length - 1) {
         this.endGame();
         return;
@@ -612,7 +627,7 @@ export default {
     },
     endLevel10() {
       stopBackgroundMusic()
-      this.isLevel10 = false;
+      this.isLevel10 = true;
       clearInterval(this.timer);
     },
     endGame() {
@@ -649,7 +664,21 @@ export default {
      * Reload game by refresh the page.
      */
     restartGame() {
-      window.location.reload();
+      playBackgroundMusic();
+      this.levelIndex = 0;
+      this.isLevel10 = false;
+      this.gameStarted = true;
+      this.gameEnded = false;
+      this.secondsLeft = InitialSeconds;
+      this.startTimer();
+
+      service
+        .stakeToken(this.globalData.privkey, this.globalData.stake)
+        .then(() => {
+          this.$emit("stake", this.globalData.stake);
+        });
+
+      // window.location.reload();
     }
   }
 };

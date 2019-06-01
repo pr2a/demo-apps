@@ -112,6 +112,7 @@ footer {
       </button>
     </div>
     <button
+      v-if="!isZeroBalance"
       class="btn-primary start-btn"
       @click="stakeToken"
       :disabled="globalData.balance < 20"
@@ -128,6 +129,15 @@ export default {
     return {
       globalData: store.data
     };
+  },
+  computed: {
+    /**
+     * Check if balance is zero.
+     * @return {boolean}
+     */
+    isZeroBalance() {
+      return this.globalData.balance <= 0;
+    },
   },
   methods: {
     minus() {
