@@ -94,6 +94,7 @@ func main() {
 	r.HandleFunc("/play", handlePostPlay)
 	r.HandleFunc("/finish", handlePostFinish)
 	r.HandleFunc("/user/{key}/email", handleUserEmail)
+	r.HandleFunc("/coupon", handleUserCoupon)
 
 	http.Handle("/", r)
 
@@ -510,7 +511,6 @@ func sendError(w http.ResponseWriter, err error) {
 	}
 	http.Error(w, err.Error(), code)
 }
-
 func handleUserEmail(w http.ResponseWriter, r *http.Request) {
 	allowCORS(w)
 	ctx := appengine.NewContext(r)
@@ -522,6 +522,55 @@ func handleUserEmail(w http.ResponseWriter, r *http.Request) {
 	case "PUT":
 		var emailPtr *string
 		if err := jsonRequestBody(r, &emailPtr); err != nil {
+			sendError(w, err)
+			return
+		}
+		if emailPtr == nil {
+			http.Error(w, "empty email address", http.StatusBadRequest)
+			return
+		}
+		email, err := mail.ParseAddress(*emailPtr)
+		if err != nil {
+			http.Error(w, "invalid email address", http.StatusBadRequest)
+			return
+		}
+		players, err := db.UpdatePzPlayers(ctx,
+			func(q firestore.Query) firestore.Query {
+				return q.Where("privkey", "==", key)
+			},
+			[]firestore.Update{
+				{FieldPath: []string{"email"}, Value: email.Address},
+			},
+		)
+		if err != nil {
+			sendError(w, err)
+			return
+		}
+		if len(players) > 0 {
+			for _, player := range players {
+				app_log.Debugf(ctx, "updated player %#v with email %#v",
+					player, email.Address)
+			}
+			w.WriteHeader(http.StatusNoContent)
+		} else {
+			http.NotFound(w, r)
+		}
+	default:
+		sendMethodNotAllowed(w, "POST", "OPTIONS")
+	}
+}
+
+func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
+	allowCORS(w)
+	ctx := appengine.NewContext(r)
+	vars := mux.Vars(r)
+	key := vars["key"]
+	switch strings.ToUpper(r.Method) {
+	case "OPTIONS":
+		return
+	case "PUT":
+		var couponPtr *string
+		if err := jsonRequestBody(r, &couponPtr); err != nil {
 			sendError(w, err)
 			return
 		}
