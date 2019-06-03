@@ -578,11 +578,6 @@ func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "empty coupon string", http.StatusBadRequest)
 			return
 		}
-		// email, err := mail.ParseAddress(*emailPtr)
-		// if err != nil {
-		// 	http.Error(w, "invalid email address", http.StatusBadRequest)
-		// 	return
-		// }
 		players, err := db.UpdatePzPlayers(ctx,
 			func(q firestore.Query) firestore.Query {
 				return q.Where("privkey", "==", key)
