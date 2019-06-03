@@ -94,7 +94,7 @@ func main() {
 	r.HandleFunc("/play", handlePostPlay)
 	r.HandleFunc("/finish", handlePostFinish)
 	r.HandleFunc("/user/{key}/email", handleUserEmail)
-	r.HandleFunc("/coupon", handleUserCoupon)
+	r.HandleFunc("/user/{key}/coupon", handleUserCoupon)
 
 	http.Handle("/", r)
 
