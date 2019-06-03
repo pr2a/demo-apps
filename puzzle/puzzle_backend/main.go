@@ -574,21 +574,21 @@ func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
 			sendError(w, err)
 			return
 		}
-		if emailPtr == nil {
-			http.Error(w, "empty email address", http.StatusBadRequest)
+		if couponPtr == nil {
+			http.Error(w, "empty coupon string", http.StatusBadRequest)
 			return
 		}
-		email, err := mail.ParseAddress(*emailPtr)
-		if err != nil {
-			http.Error(w, "invalid email address", http.StatusBadRequest)
-			return
-		}
+		// email, err := mail.ParseAddress(*emailPtr)
+		// if err != nil {
+		// 	http.Error(w, "invalid email address", http.StatusBadRequest)
+		// 	return
+		// }
 		players, err := db.UpdatePzPlayers(ctx,
 			func(q firestore.Query) firestore.Query {
 				return q.Where("privkey", "==", key)
 			},
 			[]firestore.Update{
-				{FieldPath: []string{"email"}, Value: email.Address},
+				{FieldPath: []string{"coupon"}, Value: coupon},
 			},
 		)
 		if err != nil {
@@ -597,8 +597,8 @@ func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
 		}
 		if len(players) > 0 {
 			for _, player := range players {
-				app_log.Debugf(ctx, "updated player %#v with email %#v",
-					player, email.Address)
+				app_log.Debugf(ctx, "updated player %#v with coupon %#v",
+					player, coupon)
 			}
 			w.WriteHeader(http.StatusNoContent)
 		} else {
