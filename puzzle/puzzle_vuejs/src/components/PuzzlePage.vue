@@ -341,7 +341,7 @@ footer {
                       Play again!
                     </button>
 
-                    <button v-if="gameEnded && !isZeroBalance" class="btn-primary" @click="restartGame">
+                    <button v-if="gameEnded && !isZeroBalance" class="btn-primary" @click="reloadGame">
                       Play again!
                     </button>
                   </div>
@@ -442,7 +442,8 @@ footer {
               class="flex-grow level-text"
               :style="levelTextStyle"
             >Level: {{ levelIndex + 1 }} / {{ levels.length }}</span>
-            <button v-if="gameEnded && !isZeroBalance"  class="btn-primary" @click="restartGame">
+
+            <button v-if="gameEnded && !isZeroBalance"  class="btn-primary" @click="reloadGame">
               Play again!
             </button>
           </div>
