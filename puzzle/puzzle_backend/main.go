@@ -583,7 +583,7 @@ func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
 				return q.Where("privkey", "==", key)
 			},
 			[]firestore.Update{
-				{FieldPath: []string{"coupon"}, Value: coupon},
+				{FieldPath: []string{"coupon"}, Value: *couponPtr},
 			},
 		)
 		if err != nil {
@@ -593,7 +593,7 @@ func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
 		if len(players) > 0 {
 			for _, player := range players {
 				app_log.Debugf(ctx, "updated player %#v with coupon %#v",
-					player, coupon)
+					player, *couponPtr)
 			}
 			w.WriteHeader(http.StatusNoContent)
 		} else {
