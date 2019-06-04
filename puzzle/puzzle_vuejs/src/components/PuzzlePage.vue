@@ -202,6 +202,33 @@ footer {
   text-align: center;
   text-decoration: none;
 }
+.input {
+  border-radius: 0.5em;
+  border: 1px solid black;
+  background-color: #fff;
+  display: block;
+  width: 100%;
+  overflow: auto;
+  -webkit-appearance: none;
+  font-size: initial;
+  outline: none;
+  margin-bottom: 0.5em;
+}
+  .is-level10 {
+    .inputs {
+      margin-top: 10px;
+    }
+
+    .input-error {
+      font-size: 14px;
+      color: red;
+    }
+
+    .texts {
+      margin-top: 10px;
+    }
+  }
+
 </style>
 
 <template>
@@ -267,44 +294,36 @@ footer {
 <!--            </div>-->
 <!--          </div>-->
 
-          <div v-if="isLevel10">
+          <div v-if="gameEnded">
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
                 <div>
-                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex >= 1">
+                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex > showCouponLevel">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
                     <br>
                     <span v-if="gameEnded" :style="gameTutorialSmallStyle">Tweet your success!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle"></span>
                     <br>
                     <br>
                   </p>
                 </div>
 
-                <div v-if="!isZeroBalance">
-                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex == 0">
+                <div>
+                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex <= showCouponLevel">
                     <span :style="gameTutorialSmallStyle">Don't lose hope!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">Try Again!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle"></span>
-                    <br>
                   </p>
                 </div>
 
-                <div v-if="isZeroBalance">
-                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex == 0">
-                    <span :style="gameTutorialSmallStyle">You lost all your TOKENS :( < Replace actual text here > </span>
-                  </p>
-                </div>
-
-                <div v-if="this.levelIndex === 99">
+                <div v-if="this.levelIndex === fireworkLevel">
                   <Fireworks/>
                 </div>
-                <div class="buttons" v-if="this.levelIndex >= 1">
+
+                <div class="buttons" v-if="this.levelIndex > showCouponLevel">
                   <div>
                     <social-sharing :title="twitterTitle"
                                     url=""
@@ -318,8 +337,8 @@ footer {
                   </div>
 
                   <div>
-                    <button v-if="!gameEnded" class="btn-primary" @click="keepPlaying">
-                      Keep Playing!
+                    <button v-if="gameEnded && isZeroBalance" class="btn-primary" @click="reloadGame">
+                      Play again!
                     </button>
 
                     <button v-if="gameEnded && !isZeroBalance" class="btn-primary" @click="restartGame">
@@ -329,6 +348,47 @@ footer {
                 </div>
                 <div>
 
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="is-level10" v-if="isLevel10 && !gameEnded">
+            <div class="overlay game-over-message appearing">
+              <div class="content content-level10">
+                <div>
+                  <p class="blur-text" :style="gameTutorialStyle">
+                    <span :style="gameTutorialSmallStyle">Congrats!</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">Enter your coupon: </span>
+                    <br>
+                  </p>
+
+                  <div class="inputs">
+                    <input class="input" v-model="couponCode" placeholder="Enter coupon code">
+                    <span
+                      v-bind:class="{'input-error': !isRedeemed, 'input-success': isRedeemed}">
+                      {{this.redeemMessage}}</span>
+                    <br>
+                    <button v-if="!isRedeemed"
+                      class="btn-primary" @click="enterCouponCode">Redeem code</button>
+                  </div>
+
+                  <div class="texts">
+                    <a target="_blank" href="http://harmony.one">What is BNB Code</a>
+                  </div>
+                </div>
+
+                <div class="buttons">
+                  <div>
+                    <button v-if="!gameEnded" class="btn-primary" @click="keepPlaying">
+                      Keep Playing!
+                    </button>
+                  </div>
+                </div>
+                <div>
                 </div>
               </div>
             </div>
@@ -406,8 +466,9 @@ import store from "../store";
 import { levels } from "../level-generator";
 import { setInterval, clearInterval } from "timers";
 import Fireworks from "./Fireworks";
+import { VALIDATE } from "../common/validate";
 
-const InitialSeconds = 1;
+const InitialSeconds = 30;
 function guid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
@@ -454,6 +515,11 @@ export default {
   },
   data() {
     return {
+      // constants
+      fireworkLevel: 99,
+      showCouponLevel: 9,
+
+      // variables
       globalData: store.data,
       levelIndex: 0,
       // levels: [],
@@ -469,7 +535,12 @@ export default {
       balanceIncrease: "",
       isMobile: mobilecheck(),
       reward: 0,
-      cancelEmail: false
+      cancelEmail: false,
+      couponCode: "",
+
+      // redeem code component
+      redeemMessage: "",
+      isRedeemed: false
     };
   },
   mounted() {
@@ -601,7 +672,7 @@ export default {
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
 
-      if (this.levelIndex > 110) {
+      if (this.levelIndex === this.showCouponLevel) {
         this.endLevel10()
         return;
       }
@@ -661,7 +732,7 @@ export default {
     },
 
     /**
-     * Reload game by refresh the page.
+     * Restart the game but still keeps the current point
      */
     restartGame() {
       playBackgroundMusic();
@@ -677,9 +748,33 @@ export default {
         .then(() => {
           this.$emit("stake", this.globalData.stake);
         });
+    },
 
-      // window.location.reload();
+    /**
+     * Reload the game entirely
+     */
+    reloadGame() {
+      window.location.reload();
+    },
+
+    validCouponCode(s) {
+      return VALIDATE.validateNumber(s);
+    },
+
+    /**
+     * Enter coupon code
+     */
+    enterCouponCode() {
+      const isValidCouponCode = this.validCouponCode(this.couponCode);
+      if (!isValidCouponCode) {
+        this.redeemMessage = 'Coupon code is not valid.';
+        return;
+      }
+
+      this.redeemMessage = 'You have successfully redeem the code.';
+      this.isRedeemed = true;
     }
+
   }
 };
 </script>
