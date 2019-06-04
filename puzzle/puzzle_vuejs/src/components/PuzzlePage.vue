@@ -202,6 +202,37 @@ footer {
   text-align: center;
   text-decoration: none;
 }
+.input {
+  border-radius: 0.5em;
+  border: 1px solid black;
+  background-color: #fff;
+  display: block;
+  width: 100%;
+  overflow: auto;
+  -webkit-appearance: none;
+  font-size: initial;
+  outline: none;
+  margin-bottom: 0.5em;
+}
+  .is-level10 {
+    .inputs {
+      margin-top: 10px;
+    }
+
+    .input-error {
+      font-size: 14px;
+      color: red;
+    }
+
+    .texts {
+      margin-top: 10px;
+    }
+  }
+
+  img.loading {
+    width: 50px;
+  }
+
 </style>
 
 <template>
@@ -267,37 +298,36 @@ footer {
 <!--            </div>-->
 <!--          </div>-->
 
-          <div v-if="isLevel10">
+          <div v-if="gameEnded">
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
                 <div>
-                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex >= 1">
+                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex > showCouponLevel">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
                     <br>
                     <span v-if="gameEnded" :style="gameTutorialSmallStyle">Tweet your success!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle"></span>
                     <br>
                     <br>
                   </p>
                 </div>
+
                 <div>
-                <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex == 0">
+                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex <= showCouponLevel">
                     <span :style="gameTutorialSmallStyle">Don't lose hope!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">Try Again!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle"></span>
-                    <br>
-
                   </p>
                 </div>
-                <div v-if="this.levelIndex === 99">
+
+                <div v-if="this.levelIndex === fireworkLevel">
                   <Fireworks/>
                 </div>
-                <div class="buttons" v-if="this.levelIndex >= 1">
+
+                <div class="buttons" v-if="this.levelIndex > showCouponLevel">
                   <div>
                     <social-sharing :title="twitterTitle"
                                     url=""
@@ -310,18 +340,54 @@ footer {
                     </social-sharing>
                   </div>
 
+                </div>
+                <div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="is-level10" v-if="isLevel10 && !gameEnded">
+            <div class="overlay game-over-message appearing">
+              <div class="content content-level10">
+                <div>
+                  <p class="blur-text" :style="gameTutorialStyle">
+                    <span :style="gameTutorialSmallStyle">Congrats!</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
+                    <br>
+                    <span :style="gameTutorialSmallStyle">Enter your coupon: </span>
+                    <br>
+                  </p>
+
+                  <div v-if="isRedeeming" class="loading-section">
+                    <img class="loading" src="../assets/loading.svg" alt="">
+                  </div>
+
+                  <div v-if="!isRedeeming" class="inputs">
+                    <input class="input" v-model="couponCode" placeholder="Enter coupon code">
+                    <span
+                      v-bind:class="{'input-error': !isRedeemed, 'input-success': isRedeemed}">
+                      {{this.redeemMessage}}</span>
+                    <br>
+                    <button v-if="!isRedeemed"
+                      class="btn-primary" @click="enterCouponCode">Redeem code</button>
+                  </div>
+
+                  <div class="texts">
+                    <a target="_blank" href="http://harmony.one">What is BNB Code</a>
+                  </div>
+                </div>
+
+                <div class="buttons">
                   <div>
                     <button v-if="!gameEnded" class="btn-primary" @click="keepPlaying">
                       Keep Playing!
                     </button>
-
-            <!--        <button v-if="gameEnded" class="btn-primary" @click="restartGame">-->
-          <!--              Play again!  -->
-            <!--          </button>  -->
                   </div>
                 </div>
                 <div>
-
                 </div>
               </div>
             </div>
@@ -350,7 +416,7 @@ footer {
           :style="stakeRowStyle"
           @stakeToken="resetLevel"
         ></stake-row>
-   
+
         <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
           <div class="flex-horizontal action-row">
             <span
@@ -375,9 +441,9 @@ footer {
               class="flex-grow level-text"
               :style="levelTextStyle"
             >Level: {{ levelIndex + 1 }} / {{ levels.length }}</span>
-            <button v-if="gameEnded"  class="btn-primary" @click="restartGame">
-                       Play again!  
-                     </button>
+
+            <button v-if="gameEnded"  class="btn-primary" @click="reloadGame">
+              Play again!
             </button>
           </div>
         </footer>
@@ -400,6 +466,7 @@ import store from "../store";
 import { levels } from "../level-generator";
 import { setInterval, clearInterval } from "timers";
 import Fireworks from "./Fireworks";
+import { VALIDATE } from "../common/validate";
 
 const InitialSeconds = 30;
 function guid() {
@@ -448,6 +515,11 @@ export default {
   },
   data() {
     return {
+      // constants
+      fireworkLevel: 99,
+      showCouponLevel: 9,
+
+      // variables
       globalData: store.data,
       levelIndex: 0,
       // levels: [],
@@ -463,10 +535,17 @@ export default {
       balanceIncrease: "",
       isMobile: mobilecheck(),
       reward: 0,
-      cancelEmail: false
+      cancelEmail: false,
+      couponCode: "",
+
+      // redeem code component
+      redeemMessage: "",
+      isRedeemed: false,
+      isRedeeming: false
     };
   },
   mounted() {
+    let _vm = this;
     let id = getParameterByName("cos");
     this.levels = levels();
     //Set board size follow height of screen when change screen size
@@ -487,6 +566,10 @@ export default {
       window.innerHeight / 1.7
     );
     service.register(id);
+
+    this.$root.$on('social_shares_open', function(network, url) {
+      _vm.trackTweet()
+    })
   },
   computed: {
     gameOverStyle() {
@@ -550,7 +633,7 @@ export default {
      */
     twitterTitle() {
       return `I finished level ${this.levelIndex} of #harmonypuzzle! See my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} Play it at https://puzzle.harmony.one`
-    }
+    },
   },
   destroyed() {
     // Remove event change screen
@@ -575,22 +658,35 @@ export default {
     resetLevel() {
       this.$refs[`game${this.levelIndex}`][0].reset();
     },
+
+    userGameLevel() {
+      return `user-game-level-${this.levelIndex + 1}`
+    },
+
     /***
      * Track analytics current level
      * @param level
      */
     gaTrack(level) {
-      const userLevel = `user-game-level-${level}`
+      const userLevel = this.userGameLevel()
       this.$ga.event('puzzle-game', 'game-level', userLevel, 1)
+    },
+    /***
+     * Track analytics current level
+     * @param level
+     */
+    trackTweet(level) {
+      const userLevel = this.userGameLevel()
+      this.$ga.event('puzzle-game', 'tweet', userLevel)
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
-      if (this.levelIndex > 110) {
+
+      if (this.levelIndex === this.showCouponLevel) {
         this.endLevel10()
         return;
       }
 
-      // TODO: nxqd We will improve this logic when we have the coupon implemented.
       if (this.levelIndex === this.levels.length - 1) {
         this.endGame();
         return;
@@ -612,7 +708,7 @@ export default {
     },
     endLevel10() {
       stopBackgroundMusic()
-      this.isLevel10 = false;
+      this.isLevel10 = true;
       clearInterval(this.timer);
     },
     endGame() {
@@ -646,11 +742,54 @@ export default {
     },
 
     /**
-     * Reload game by refresh the page.
+     * Restart the game but still keeps the current point
      */
     restartGame() {
+      playBackgroundMusic();
+      this.levelIndex = 0;
+      this.isLevel10 = false;
+      this.gameStarted = true;
+      this.gameEnded = false;
+      this.secondsLeft = InitialSeconds;
+      this.startTimer();
+
+      service
+        .stakeToken(this.globalData.privkey, this.globalData.stake)
+        .then(() => {
+          this.$emit("stake", this.globalData.stake);
+        });
+    },
+
+    /**
+     * Reload the game entirely
+     */
+    reloadGame() {
+      this.$ga.event('puzzle-game', 'reload-game', this.userGameLevel())
       window.location.reload();
+    },
+
+    validCouponCode(s) {
+      return VALIDATE.validateNumber(s);
+    },
+
+    /**
+     * Enter coupon code
+     */
+    enterCouponCode() {
+      const isValidCouponCode = this.validCouponCode(this.couponCode);
+      if (!isValidCouponCode) {
+        this.redeemMessage = 'Coupon code is not valid.';
+        return;
+      }
+
+      this.isRedeeming = true;
+      service.redeemCode(this.couponCode).then(() => {
+        this.redeemMessage = 'You have successfully redeem the code.';
+        this.isRedeemed = true;
+        this.isRedeeming = false;
+      });
     }
+
   }
 };
 </script>
