@@ -337,11 +337,7 @@ footer {
                   </div>
 
                   <div>
-                    <button v-if="gameEnded && isZeroBalance" class="btn-primary" @click="reloadGame">
-                      Play again!
-                    </button>
-
-                    <button v-if="gameEnded && !isZeroBalance" class="btn-primary" @click="reloadGame">
+                    <button v-if="gameEnded" class="btn-primary" @click="reloadGame">
                       Play again!
                     </button>
                   </div>
@@ -443,7 +439,7 @@ footer {
               :style="levelTextStyle"
             >Level: {{ levelIndex + 1 }} / {{ levels.length }}</span>
 
-            <button v-if="gameEnded && !isZeroBalance"  class="btn-primary" @click="reloadGame">
+            <button v-if="gameEnded"  class="btn-primary" @click="reloadGame">
               Play again!
             </button>
           </div>
@@ -628,15 +624,6 @@ export default {
      */
     twitterTitle() {
       return `I finished level ${this.levelIndex} of #harmonypuzzle! See my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} Play it at https://puzzle.harmony.one`
-    },
-
-    /**
-     * Check if balance is zero.
-     * @return {boolean}
-     */
-    isZeroBalance() {
-      console.log("eeeeeeee balance", this.globalData.balance);
-      return this.globalData.balance <= 0;
     },
   },
   destroyed() {
