@@ -9,7 +9,8 @@ let store = {
         privkey: '',
         address: '',
         stake: 20,
-        email: ''
+        email: '',
+        coupon: ''
     },
     addTx(tx) {
         this.data.txs.push(tx);

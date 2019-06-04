@@ -94,6 +94,7 @@ func main() {
 	r.HandleFunc("/play", handlePostPlay)
 	r.HandleFunc("/finish", handlePostFinish)
 	r.HandleFunc("/user/{key}/email", handleUserEmail)
+	r.HandleFunc("/user/{key}/coupon", handleUserCoupon)
 
 	http.Handle("/", r)
 
@@ -127,6 +128,15 @@ type cosGetUIDResponseBody struct {
 type getUIDError struct {
 	Status  int64
 	Message string
+}
+
+//EmailField to get email
+type EmailField struct {
+	Email string
+}
+
+type CouponField struct {
+	Coupon string
 }
 
 func (e *getUIDError) Error() string {
@@ -510,7 +520,6 @@ func sendError(w http.ResponseWriter, err error) {
 	}
 	http.Error(w, err.Error(), code)
 }
-
 func handleUserEmail(w http.ResponseWriter, r *http.Request) {
 	allowCORS(w)
 	ctx := appengine.NewContext(r)
@@ -520,16 +529,16 @@ func handleUserEmail(w http.ResponseWriter, r *http.Request) {
 	case "OPTIONS":
 		return
 	case "PUT":
-		var emailPtr *string
-		if err := jsonRequestBody(r, &emailPtr); err != nil {
+		var E EmailField
+		if err := jsonRequestBody(r, &E); err != nil {
 			sendError(w, err)
 			return
 		}
-		if emailPtr == nil {
+		if &E == nil {
 			http.Error(w, "empty email address", http.StatusBadRequest)
 			return
 		}
-		email, err := mail.ParseAddress(*emailPtr)
+		email, err := mail.ParseAddress(E.Email)
 		if err != nil {
 			http.Error(w, "invalid email address", http.StatusBadRequest)
 			return
@@ -550,6 +559,50 @@ func handleUserEmail(w http.ResponseWriter, r *http.Request) {
 			for _, player := range players {
 				app_log.Debugf(ctx, "updated player %#v with email %#v",
 					player, email.Address)
+			}
+			w.WriteHeader(http.StatusNoContent)
+		} else {
+			http.NotFound(w, r)
+		}
+	default:
+		sendMethodNotAllowed(w, "POST", "OPTIONS")
+	}
+}
+
+func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
+	allowCORS(w)
+	ctx := appengine.NewContext(r)
+	vars := mux.Vars(r)
+	key := vars["key"]
+	switch strings.ToUpper(r.Method) {
+	case "OPTIONS":
+		return
+	case "PUT":
+		var coupon CouponField
+		if err := jsonRequestBody(r, &coupon); err != nil {
+			sendError(w, err)
+			return
+		}
+		if &coupon == nil {
+			http.Error(w, "empty coupon string", http.StatusBadRequest)
+			return
+		}
+		players, err := db.UpdatePzPlayers(ctx,
+			func(q firestore.Query) firestore.Query {
+				return q.Where("privkey", "==", key)
+			},
+			[]firestore.Update{
+				{FieldPath: []string{"coupon"}, Value: coupon.Coupon},
+			},
+		)
+		if err != nil {
+			sendError(w, err)
+			return
+		}
+		if len(players) > 0 {
+			for _, player := range players {
+				app_log.Debugf(ctx, "updated player %#v with coupon %#v",
+					player, coupon.Coupon)
 			}
 			w.WriteHeader(http.StatusNoContent)
 		} else {
