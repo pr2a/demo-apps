@@ -229,6 +229,10 @@ footer {
     }
   }
 
+  img.loading {
+    width: 50px;
+  }
+
 </style>
 
 <template>
@@ -349,7 +353,8 @@ footer {
             </div>
           </div>
 
-          <div class="is-level10" v-if="isLevel10 && !gameEnded">
+<!--          <div class="is-level10" v-if="isLevel10 && !gameEnded">-->
+          <div class="is-level10" v-if="true">
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
                 <div>
@@ -362,7 +367,11 @@ footer {
                     <br>
                   </p>
 
-                  <div class="inputs">
+                  <div v-if="isRedeeming" class="loading-section">
+                    <img class="loading" src="../assets/loading.svg" alt="">
+                  </div>
+
+                  <div v-if="!isRedeeming" class="inputs">
                     <input class="input" v-model="couponCode" placeholder="Enter coupon code">
                     <span
                       v-bind:class="{'input-error': !isRedeemed, 'input-success': isRedeemed}">
@@ -537,7 +546,8 @@ export default {
 
       // redeem code component
       redeemMessage: "",
-      isRedeemed: false
+      isRedeemed: false,
+      isRedeeming: true
     };
   },
   mounted() {
@@ -759,8 +769,12 @@ export default {
         return;
       }
 
-      this.redeemMessage = 'You have successfully redeem the code.';
-      this.isRedeemed = true;
+      this.isRedeeming = true;
+      service.redeemCode(this.couponCode).then(() => {
+        this.redeemMessage = 'You have successfully redeem the code.';
+        this.isRedeemed = true;
+        this.isRedeeming = false;
+      });
     }
 
   }
