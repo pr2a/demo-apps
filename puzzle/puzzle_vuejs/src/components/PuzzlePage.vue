@@ -340,11 +340,6 @@ footer {
                     </social-sharing>
                   </div>
 
-                  <div>
-                    <button v-if="gameEnded" class="btn-primary" @click="reloadGame">
-                      Play again!
-                    </button>
-                  </div>
                 </div>
                 <div>
 
