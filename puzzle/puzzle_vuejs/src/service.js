@@ -75,7 +75,7 @@ export default {
     },
   redeemCode(couponCode) {
       // TODO: nxqd replace this with real implementation later.
-      return new Promise();;
+      return new Promise();
     // return axios({
     //   url: HTTP_BACKEND_URL + `/user/${store.data.privkey}/coupon`,
     //   method: 'PUT',

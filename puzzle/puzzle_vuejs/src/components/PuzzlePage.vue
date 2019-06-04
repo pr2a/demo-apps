@@ -353,8 +353,7 @@ footer {
             </div>
           </div>
 
-<!--          <div class="is-level10" v-if="isLevel10 && !gameEnded">-->
-          <div class="is-level10" v-if="true">
+          <div class="is-level10" v-if="isLevel10 && !gameEnded">
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
                 <div>
@@ -547,10 +546,11 @@ export default {
       // redeem code component
       redeemMessage: "",
       isRedeemed: false,
-      isRedeeming: true
+      isRedeeming: false
     };
   },
   mounted() {
+    let _vm = this;
     let id = getParameterByName("cos");
     this.levels = levels();
     //Set board size follow height of screen when change screen size
@@ -571,6 +571,10 @@ export default {
       window.innerHeight / 1.7
     );
     service.register(id);
+
+    this.$root.$on('social_shares_open', function(network, url) {
+      _vm.trackTweet()
+    })
   },
   computed: {
     gameOverStyle() {
@@ -659,13 +663,26 @@ export default {
     resetLevel() {
       this.$refs[`game${this.levelIndex}`][0].reset();
     },
+
+    userGameLevel() {
+      return `user-game-level-${this.levelIndex + 1}`
+    },
+
     /***
      * Track analytics current level
      * @param level
      */
     gaTrack(level) {
-      const userLevel = `user-game-level-${level}`
+      const userLevel = this.userGameLevel()
       this.$ga.event('puzzle-game', 'game-level', userLevel, 1)
+    },
+    /***
+     * Track analytics current level
+     * @param level
+     */
+    trackTweet(level) {
+      const userLevel = this.userGameLevel()
+      this.$ga.event('puzzle-game', 'tweet', userLevel)
     },
     onLevelComplete(moves) {
       this.gaTrack(this.levelIndex);
@@ -752,6 +769,7 @@ export default {
      * Reload the game entirely
      */
     reloadGame() {
+      this.$ga.event('puzzle-game', 'reload-game', this.userGameLevel())
       window.location.reload();
     },
 
