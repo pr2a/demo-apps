@@ -130,6 +130,15 @@ type getUIDError struct {
 	Message string
 }
 
+//EmailField to get email
+type EmailField struct {
+	Email string
+}
+
+type CouponField struct {
+	Coupon string
+}
+
 func (e *getUIDError) Error() string {
 	return fmt.Sprintf("get_uid failed with status=%#v message=%#v",
 		e.Status, e.Message)
@@ -520,16 +529,16 @@ func handleUserEmail(w http.ResponseWriter, r *http.Request) {
 	case "OPTIONS":
 		return
 	case "PUT":
-		var emailPtr *string
-		if err := jsonRequestBody(r, &emailPtr); err != nil {
+		var E EmailField
+		if err := jsonRequestBody(r, &E); err != nil {
 			sendError(w, err)
 			return
 		}
-		if emailPtr == nil {
+		if &E == nil {
 			http.Error(w, "empty email address", http.StatusBadRequest)
 			return
 		}
-		email, err := mail.ParseAddress(*emailPtr)
+		email, err := mail.ParseAddress(E.Email)
 		if err != nil {
 			http.Error(w, "invalid email address", http.StatusBadRequest)
 			return
@@ -569,12 +578,12 @@ func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
 	case "OPTIONS":
 		return
 	case "PUT":
-		var couponPtr *string
-		if err := jsonRequestBody(r, &couponPtr); err != nil {
+		var coupon CouponField
+		if err := jsonRequestBody(r, &coupon); err != nil {
 			sendError(w, err)
 			return
 		}
-		if couponPtr == nil {
+		if &coupon == nil {
 			http.Error(w, "empty coupon string", http.StatusBadRequest)
 			return
 		}
@@ -583,7 +592,7 @@ func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
 				return q.Where("privkey", "==", key)
 			},
 			[]firestore.Update{
-				{FieldPath: []string{"coupon"}, Value: *couponPtr},
+				{FieldPath: []string{"coupon"}, Value: coupon.Coupon},
 			},
 		)
 		if err != nil {
@@ -593,7 +602,7 @@ func handleUserCoupon(w http.ResponseWriter, r *http.Request) {
 		if len(players) > 0 {
 			for _, player := range players {
 				app_log.Debugf(ctx, "updated player %#v with coupon %#v",
-					player, *couponPtr)
+					player, coupon.Coupon)
 			}
 			w.WriteHeader(http.StatusNoContent)
 		} else {
