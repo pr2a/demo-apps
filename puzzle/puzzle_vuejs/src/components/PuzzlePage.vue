@@ -367,7 +367,7 @@ footer {
                   </div>
 
                   <div class="texts" v-if="!isRedeemed && !isRedeeming">
-                    <a target="_blank" href="http://harmony.one">What is BNB Code</a>
+                    <a target="_blank" href="http://harmony.one">Get Binance Promo Code</a>
                   </div>
                 </div>
 
