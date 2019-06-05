@@ -161,8 +161,6 @@ export default {
         });
     },
     showPlayButton() {
-      console.log("eeeeeeee this.isLevel10", this.isLevel10)
-      console.log("eeeeeeee this.gameEnded", this.gameEnded)
       return !(this.isLevel10 && !this.gameEnded)
     }
   }

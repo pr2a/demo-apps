@@ -417,6 +417,7 @@ footer {
               :style="levelTextStyle"
             >Level: {{ levelIndex + 1 }} / {{ levels.length }}</span>
             <button
+              v-if="showResetButton"
               class="btn-primary"
               @click="resetLevel"
               :style="{
@@ -461,7 +462,7 @@ import { setInterval, clearInterval } from "timers";
 import Fireworks from "./Fireworks";
 import { VALIDATE } from "../common/validate";
 
-const InitialSeconds = 30;
+const InitialSeconds = 2;
 function guid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
@@ -627,6 +628,22 @@ export default {
     twitterTitle() {
       return `I finished level ${this.levelIndex} of #harmonypuzzle! See my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} Play it at https://puzzle.harmony.one`
     },
+
+    showTwitterLevel() {
+      return this.levelIndex > this.showCouponLevel;
+    },
+
+    showNoLoseLevel() {
+      return this.levelIndex <= this.showCouponLevel;
+    },
+
+    /**
+     * Show reset button
+     * @return {boolean}
+     */
+    showResetButton() {
+      return !(this.isLevel10 && !this.gameEnded)
+    }
   },
   destroyed() {
     // Remove event change screen
@@ -654,14 +671,6 @@ export default {
 
     userGameLevel() {
       return `user-game-level-${this.levelIndex + 1}`
-    },
-
-    showTwitterLevel() {
-      return this.levelIndex > this.showCouponLevel;
-    },
-
-    showNoLoseLevel() {
-      return this.levelIndex <= this.showCouponLevel;
     },
 
     /***
@@ -794,7 +803,8 @@ export default {
       }).finally(() => {
         this.isRedeeming = false;
       })
-    }
+    },
+
 
   }
 };
