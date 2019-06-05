@@ -237,12 +237,6 @@ footer {
 
 <template>
   <div id="app">
-<!--    <redeem-panel-->
-<!--      v-if="gameEnded && !globalData.email && !cancelEmail"-->
-<!--      :reward="reward"-->
-<!--      :boardSizePx="boardSizePx"-->
-<!--      @cancelEmail="closeEmailPopup"-->
-<!--    ></redeem-panel>-->
     <div class="main-container appearing">
       <div class="game-container" ref="gameContainer">
         <a
@@ -283,21 +277,6 @@ footer {
         </div>
 
         <div class="board-wrapper" :style="boardWrapperStyle">
-<!--          <div v-if="gameEnded || !gameStarted">-->
-<!--            <div class="overlay game-over-message appearing">-->
-<!--              <div class="content content-tutorial">-->
-<!--                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging in...</p>-->
-<!--                <p :style="gameOverStyle" v-else-if="gameEnded">Game over!</p>-->
-<!--                <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">-->
-<!--                  <span-->
-<!--                    :style="gameTutorialSmallStyle"-->
-<!--                  >Place bet (bottom left) and click “Start"</span>-->
-<!--                  <br>-->
-<!--                </p>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-
           <div v-if="gameEnded">
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
