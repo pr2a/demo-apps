@@ -34,7 +34,7 @@ footer {
 .game-over-message {
   font-weight: bold;
   text-align: center;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.85);
   border-radius: 0.3em;
 }
 
@@ -291,7 +291,7 @@ footer {
                     <br>
                     <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
                     <br>
-                    <span v-if="gameEnded" :style="gameTutorialSmallStyle">Tweet your success!</span>
+                    <span v-if="gameEnded" :style="gameTutorialSmallStyle">Don't forget to tweet your success!</span>
                     <br>
                     <br>
                     <br>
@@ -343,7 +343,7 @@ footer {
                     <br>
                     <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle">Enter your coupon: </span>
+                    <span :style="gameTutorialSmallStyle">Enter coupon code below: </span>
                     <br>
                   </p>
 
@@ -794,11 +794,11 @@ export default {
 
       this.isRedeeming = true;
       service.submitCoupon(this.couponCode).then((res) => {
-        this.redeemMessage = 'You have successfully redeem the code.';
+        this.redeemMessage = 'You have successfully redeemed the code.';
         this.isRedeemed = true;
       }).catch((err) => {
-        console.error(`There is an error while submit coupon ${this.couponCode}: ${err}`)
-        this.redeemMessage = 'Server error, please try again later. Sorry for the inconvenience.'
+        console.error(`There was an error while submitting the coupon code ${this.couponCode}: ${err}`)
+        this.redeemMessage = 'Server error, please try again later.'
         this.isRedeemed = false;
       }).finally(() => {
         this.isRedeeming = false;
