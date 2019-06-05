@@ -135,6 +135,7 @@ type EmailField struct {
 	Email string
 }
 
+//CouponField to get coupon
 type CouponField struct {
 	Coupon string
 }

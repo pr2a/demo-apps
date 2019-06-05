@@ -4,14 +4,18 @@ var randRange = function(min, max) {
 var getDifficulty  = function(level){
   if (level == 1) {
       return 1
-  } else if (level >= 2 && level <= 15 ) {
+  } else if (level >= 2 && level <= 3 ) {
       return 2
-  } else if (level >= 16 && level <= 30) {
+  } else if (level >= 4 && level <= 5) {
       return 3
-  } else if (level >= 31 && level <= 40) {
+  } else if (level >= 6 && level <= 7) {
       return 4
+  } else if (level >= 7 && level <= 8) {
+    return 4
+  } else if (level >= 8 && level <= 8) {
+    return 5
   } else {
-      return 5
+      return 6
   }
 }
 
