@@ -233,16 +233,15 @@ footer {
     width: 50px;
   }
 
+  .redeemed-section {
+    font-size: 50px;
+    color: darkgreen;
+  }
+
 </style>
 
 <template>
   <div id="app">
-<!--    <redeem-panel-->
-<!--      v-if="gameEnded && !globalData.email && !cancelEmail"-->
-<!--      :reward="reward"-->
-<!--      :boardSizePx="boardSizePx"-->
-<!--      @cancelEmail="closeEmailPopup"-->
-<!--    ></redeem-panel>-->
     <div class="main-container appearing">
       <div class="game-container" ref="gameContainer">
         <a
@@ -283,21 +282,6 @@ footer {
         </div>
 
         <div class="board-wrapper" :style="boardWrapperStyle">
-<!--          <div v-if="gameEnded || !gameStarted">-->
-<!--            <div class="overlay game-over-message appearing">-->
-<!--              <div class="content content-tutorial">-->
-<!--                <p :style="gameOverStyle" v-if="!globalData.privkey">Logging in...</p>-->
-<!--                <p :style="gameOverStyle" v-else-if="gameEnded">Game over!</p>-->
-<!--                <p class="blur-text" :style="gameTutorialStyle" v-else-if="!gameStarted">-->
-<!--                  <span-->
-<!--                    :style="gameTutorialSmallStyle"-->
-<!--                  >Place bet (bottom left) and click “Start"</span>-->
-<!--                  <br>-->
-<!--                </p>-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-
           <div v-if="gameEnded">
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
@@ -315,10 +299,12 @@ footer {
                 </div>
 
                 <div>
-                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex <= showCouponLevel">
+                  <p class="blur-text" :style="gameTutorialStyle" v-if="showNoLoseLevel">
                     <span :style="gameTutorialSmallStyle">Don't lose hope!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">Try Again!</span>
+                    <br>
+                    <br>
                     <br>
                   </p>
                 </div>
@@ -327,7 +313,7 @@ footer {
                   <Fireworks/>
                 </div>
 
-                <div class="buttons" v-if="this.levelIndex > showCouponLevel">
+                <div class="buttons" v-if="showTwitterLevel">
                   <div>
                     <social-sharing :title="twitterTitle"
                                     url=""
@@ -339,7 +325,6 @@ footer {
                       </network>
                     </social-sharing>
                   </div>
-
                 </div>
                 <div>
 
@@ -352,7 +337,8 @@ footer {
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
                 <div>
-                  <p class="blur-text" :style="gameTutorialStyle">
+                  <p v-if="!isRedeemed && !isRedeeming"
+                    class="blur-text" :style="gameTutorialStyle">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
@@ -365,8 +351,13 @@ footer {
                     <img class="loading" src="../assets/loading.svg" alt="">
                   </div>
 
+                  <div v-if="isRedeemed" class="redeemed-section">
+                    <i class="fas fa-check-circle"></i>
+                  </div>
+
                   <div v-if="!isRedeeming" class="inputs">
-                    <input class="input" v-model="couponCode" placeholder="Enter coupon code">
+                    <input v-if="!isRedeemed"
+                      class="input" v-model="couponCode" placeholder="Enter coupon code">
                     <span
                       v-bind:class="{'input-error': !isRedeemed, 'input-success': isRedeemed}">
                       {{this.redeemMessage}}</span>
@@ -375,7 +366,7 @@ footer {
                       class="btn-primary" @click="enterCouponCode">Redeem code</button>
                   </div>
 
-                  <div class="texts">
+                  <div class="texts" v-if="!isRedeemed && !isRedeeming">
                     <a target="_blank" href="http://harmony.one">What is BNB Code</a>
                   </div>
                 </div>
@@ -415,6 +406,8 @@ footer {
           @stake="startGame"
           :style="stakeRowStyle"
           @stakeToken="resetLevel"
+          :isLevel10="isLevel10"
+          :gameEnded="gameEnded"
         ></stake-row>
 
         <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
@@ -424,6 +417,7 @@ footer {
               :style="levelTextStyle"
             >Level: {{ levelIndex + 1 }} / {{ levels.length }}</span>
             <button
+              v-if="showResetButton"
               class="btn-primary"
               @click="resetLevel"
               :style="{
@@ -468,7 +462,7 @@ import { setInterval, clearInterval } from "timers";
 import Fireworks from "./Fireworks";
 import { VALIDATE } from "../common/validate";
 
-const InitialSeconds = 30;
+const InitialSeconds = 2;
 function guid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
@@ -517,7 +511,7 @@ export default {
     return {
       // constants
       fireworkLevel: 99,
-      showCouponLevel: 9,
+      showCouponLevel: 1,
 
       // variables
       globalData: store.data,
@@ -634,6 +628,22 @@ export default {
     twitterTitle() {
       return `I finished level ${this.levelIndex} of #harmonypuzzle! See my winning moves on @harmonyprotocol #blockchain https://explorer2.harmony.one/#/address/${this.globalData.address} Play it at https://puzzle.harmony.one`
     },
+
+    showTwitterLevel() {
+      return this.levelIndex > this.showCouponLevel;
+    },
+
+    showNoLoseLevel() {
+      return this.levelIndex <= this.showCouponLevel;
+    },
+
+    /**
+     * Show reset button
+     * @return {boolean}
+     */
+    showResetButton() {
+      return !(this.isLevel10 && !this.gameEnded)
+    }
   },
   destroyed() {
     // Remove event change screen
@@ -783,12 +793,18 @@ export default {
       }
 
       this.isRedeeming = true;
-      service.redeemCode(this.couponCode).then(() => {
+      service.submitCoupon(this.couponCode).then((res) => {
         this.redeemMessage = 'You have successfully redeem the code.';
         this.isRedeemed = true;
+      }).catch((err) => {
+        console.error(`There is an error while submit coupon ${this.couponCode}: ${err}`)
+        this.redeemMessage = 'Server error, please try again later. Sorry for the inconvenience.'
+        this.isRedeemed = false;
+      }).finally(() => {
         this.isRedeeming = false;
-      });
-    }
+      })
+    },
+
 
   }
 };
