@@ -368,7 +368,7 @@ export default {
       const originSeq = this.origin
         .map(e => ("0" + String(e)).slice(-2))
         .join("");
-      this.$emit("completeLevel", "||" + originSeq + this.moves + "||");
+      this.$emit("completeLevel", "||" + originSeq + this.moves+"||");
     },
     move(dir) {
       this.moves += dir;
