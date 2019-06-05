@@ -334,7 +334,6 @@ footer {
           </div>
 
           <div class="is-level10" v-if="isLevel10 && !gameEnded">
-<!--          <div class="is-level10" v-if="true">-->
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
                 <div>
@@ -462,7 +461,7 @@ import { setInterval, clearInterval } from "timers";
 import Fireworks from "./Fireworks";
 import { VALIDATE } from "../common/validate";
 
-const InitialSeconds = 5;
+const InitialSeconds = 30;
 function guid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
@@ -658,7 +657,6 @@ export default {
     },
 
     showTwitterLevel() {
-      return true;
       return this.levelIndex > this.showCouponLevel;
     },
 
