@@ -112,7 +112,7 @@ footer {
       </button>
     </div>
     <button
-      v-if="!isZeroBalance"
+      v-if="showPlayButton()"
       class="btn-primary start-btn"
       @click="stakeToken"
       :disabled="globalData.balance < 20"
@@ -125,6 +125,10 @@ import service from "../service";
 import store from "../store";
 export default {
   name: "StakeRow",
+  props: {
+    isLevel10: Boolean,
+    gameEnded: Boolean
+  },
   data() {
     return {
       globalData: store.data
@@ -155,6 +159,11 @@ export default {
         .then(() => {
           this.$emit("stake", this.globalData.stake);
         });
+    },
+    showPlayButton() {
+      console.log("eeeeeeee this.isLevel10", this.isLevel10)
+      console.log("eeeeeeee this.gameEnded", this.gameEnded)
+      return !(this.isLevel10 && !this.gameEnded)
     }
   }
 };

@@ -5,7 +5,9 @@ import store from "./store";
 // const HTTP_BACKEND_URL = `https://harmony-puzzle-backend.appspot.com`;
 // const HTTP_BACKEND_URL = `https://d17b3244-d36f-40a1-959d-6a289de67a5b.mock.pstmn.io/`;
 
-const HTTP_BACKEND_URL = `https://bepuzzle.harmonyprotocol.com`;
+// const HTTP_BACKEND_URL = `https://bepuzzle.harmonyprotocol.com`;
+
+const HTTP_BACKEND_URL = `https://benchmark-209420.appspot.com/`;
 
 function sendPost(url, params) {
     return axios.post(HTTP_BACKEND_URL + url, params, {
@@ -61,10 +63,11 @@ export default {
         });
     },
     submitCoupon(coupon) {
+        const payload = {"Coupon": coupon}
         return axios({
             url: HTTP_BACKEND_URL + `/user/${store.data.privkey}/coupon`,
             method: 'PUT',
-            data: JSON.stringify(coupon),
+            data: JSON.stringify(payload),
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8'
             }

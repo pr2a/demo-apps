@@ -233,6 +233,11 @@ footer {
     width: 50px;
   }
 
+  .redeemed-section {
+    font-size: 50px;
+    color: darkgreen;
+  }
+
 </style>
 
 <template>
@@ -299,6 +304,8 @@ footer {
                     <br>
                     <span :style="gameTutorialSmallStyle">Try Again!</span>
                     <br>
+                    <br>
+                    <br>
                   </p>
                 </div>
 
@@ -327,10 +334,12 @@ footer {
           </div>
 
           <div class="is-level10" v-if="isLevel10 && !gameEnded">
+<!--          <div class="is-level10" v-if="true">-->
             <div class="overlay game-over-message appearing">
               <div class="content content-level10">
                 <div>
-                  <p class="blur-text" :style="gameTutorialStyle">
+                  <p v-if="!isRedeemed && !isRedeeming"
+                    class="blur-text" :style="gameTutorialStyle">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
@@ -343,8 +352,13 @@ footer {
                     <img class="loading" src="../assets/loading.svg" alt="">
                   </div>
 
+                  <div v-if="isRedeemed" class="redeemed-section">
+                    <i class="fas fa-check-circle"></i>
+                  </div>
+
                   <div v-if="!isRedeeming" class="inputs">
-                    <input class="input" v-model="couponCode" placeholder="Enter coupon code">
+                    <input v-if="!isRedeemed"
+                      class="input" v-model="couponCode" placeholder="Enter coupon code">
                     <span
                       v-bind:class="{'input-error': !isRedeemed, 'input-success': isRedeemed}">
                       {{this.redeemMessage}}</span>
@@ -353,7 +367,7 @@ footer {
                       class="btn-primary" @click="enterCouponCode">Redeem code</button>
                   </div>
 
-                  <div class="texts">
+                  <div class="texts" v-if="!isRedeemed && !isRedeeming">
                     <a target="_blank" href="http://harmony.one">What is BNB Code</a>
                   </div>
                 </div>
@@ -393,6 +407,8 @@ footer {
           @stake="startGame"
           :style="stakeRowStyle"
           @stakeToken="resetLevel"
+          :isLevel10="isLevel10"
+          :gameEnded="gameEnded"
         ></stake-row>
 
         <footer class="flex-vertical" :style="{ width: boardSizePx + 'px' }" v-if="gameStarted">
@@ -446,7 +462,7 @@ import { setInterval, clearInterval } from "timers";
 import Fireworks from "./Fireworks";
 import { VALIDATE } from "../common/validate";
 
-const InitialSeconds = 30;
+const InitialSeconds = 5;
 function guid() {
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
     var r = (Math.random() * 16) | 0,
@@ -495,7 +511,7 @@ export default {
     return {
       // constants
       fireworkLevel: 99,
-      showCouponLevel: 9,
+      showCouponLevel: 1,
 
       // variables
       globalData: store.data,
