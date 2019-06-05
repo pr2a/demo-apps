@@ -69,9 +69,6 @@ export default {
                 'Content-Type': 'application/json; charset=UTF-8'
             }
         })
-            .then(() => {
-                store.data.coupon = coupon
-            });
     },
     submitEmail(email) {
         return axios({
@@ -86,18 +83,4 @@ export default {
                 store.data.email = email
             });
     },
-  redeemCode(couponCode) {
-      // TODO: nxqd replace this with real implementation later.
-      return new Promise();
-    // return axios({
-    //   url: HTTP_BACKEND_URL + `/user/${store.data.privkey}/coupon`,
-    //   method: 'PUT',
-    //   data: JSON.stringify(couponCode),
-    //   headers: {
-    //     'Content-Type': 'application/json; charset=UTF-8'
-    //   }
-    // })
-    //   .then(() => {
-    //   });
-  }
 };

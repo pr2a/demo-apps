@@ -315,7 +315,7 @@ footer {
                 </div>
 
                 <div>
-                  <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex <= showCouponLevel">
+                  <p class="blur-text" :style="gameTutorialStyle" v-if="showNoLoseLevel">
                     <span :style="gameTutorialSmallStyle">Don't lose hope!</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">Try Again!</span>
@@ -327,7 +327,7 @@ footer {
                   <Fireworks/>
                 </div>
 
-                <div class="buttons" v-if="this.levelIndex > showCouponLevel">
+                <div class="buttons" v-if="showTwitterLevel">
                   <div>
                     <social-sharing :title="twitterTitle"
                                     url=""
@@ -339,7 +339,6 @@ footer {
                       </network>
                     </social-sharing>
                   </div>
-
                 </div>
                 <div>
 
@@ -663,6 +662,15 @@ export default {
       return `user-game-level-${this.levelIndex + 1}`
     },
 
+    showTwitterLevel() {
+      return true;
+      return this.levelIndex > this.showCouponLevel;
+    },
+
+    showNoLoseLevel() {
+      return this.levelIndex <= this.showCouponLevel;
+    },
+
     /***
      * Track analytics current level
      * @param level
@@ -783,11 +791,16 @@ export default {
       }
 
       this.isRedeeming = true;
-      service.redeemCode(this.couponCode).then(() => {
+      service.submitCoupon(this.couponCode).then((res) => {
         this.redeemMessage = 'You have successfully redeem the code.';
         this.isRedeemed = true;
+      }).catch((err) => {
+        console.error(`There is an error while submit coupon ${this.couponCode}: ${err}`)
+        this.redeemMessage = 'Server error, please try again later. Sorry for the inconvenience.'
+        this.isRedeemed = false;
+      }).finally(() => {
         this.isRedeeming = false;
-      });
+      })
     }
 
   }
