@@ -289,7 +289,7 @@ footer {
                   <p class="blur-text" :style="gameTutorialStyle" v-if="this.levelIndex > showCouponLevel">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
+                    <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex+1 }}</span>
                     <br>
                     <span v-if="gameEnded" :style="gameTutorialSmallStyle">Don't forget to tweet your success!</span>
                     <br>
@@ -341,7 +341,7 @@ footer {
                     class="blur-text" :style="gameTutorialStyle">
                     <span :style="gameTutorialSmallStyle">Congrats!</span>
                     <br>
-                    <span :style="gameTutorialSmallStyle">You finished level {{ this.levelIndex}}</span>
+                    <span :style="gameTutorialSmallStyle">You finished level {{ tenLevelIndex}}</span>
                     <br>
                     <span :style="gameTutorialSmallStyle">Enter coupon code below: </span>
                     <br>
@@ -511,11 +511,12 @@ export default {
     return {
       // constants
       fireworkLevel: 99,
-      showCouponLevel: 5,
+      showCouponLevel: 9,
 
       // variables
       globalData: store.data,
       levelIndex: 0,
+      tenLevelIndex: 10,
       // levels: [],
       levels: levels(), // start with level 0 instead of demo
       boardSizePx: 0,
